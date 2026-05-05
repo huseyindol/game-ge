@@ -28,6 +28,19 @@ Yeni session başlamadan önce mutlaka oku — aynı araştırmayı tekrar yapma
    - `.claude/memory/notes.md` ← bu dosya
    - CLAUDE.md'de `@.claude/memory/notes.md` ile import edildi
 
+---
+
+## [2026-05-05] — Logger → Log Yeniden Adlandırma
+
+### Yapılanlar
+- `class_name Logger` eklenmesi yeni hata yarattı: `Class "Logger" hides a native class`
+- Godot 4.6'nın **kendi native `Logger` sınıfı** var — aynı adda class_name yasak
+- Çözüm: autoload adı `Log` olarak değiştirildi
+  - `project.godot`: `Logger=` → `Log=`
+  - `Logger.gd`: `class_name Logger` kaldırıldı, iç referanslar `Log` → güncellendi
+  - 6 script dosyasında `Logger.` → `Log.` tümü güncellendi
+- **Kural**: Godot native sınıf adlarıyla (Logger, Node, Object, vb.) aynı class_name kullanma
+
 ### Bilinen Durumlar
 - Ses dosyaları henüz eklenmedi → AudioManager uyarı log'u verir ama çökmez
 - Görsel asset'lar (hayvan/meyve resimleri) eksik → placeholder kullanılır
