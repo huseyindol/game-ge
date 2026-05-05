@@ -1,81 +1,98 @@
-[gd_scene load_steps=5 format=3 uid="uid://b1main00000000"]
+[gd_scene format=3 uid="uid://cm5gs578jyvnj"]
 
-[ext_resource type="Script" path="res://scripts/ui/Main.gd" id="1_main"]
-[ext_resource type="Theme" path="res://themes/GameTheme.tres" id="2_theme"]
+[ext_resource type="Script" uid="uid://bnr83ormrsbps" path="res://scripts/ui/Main.gd" id="1_main"]
+[ext_resource type="Theme" uid="uid://d0sr855g4svyy" path="res://themes/GameTheme.tres" id="2_theme"]
+[ext_resource type="FontFile" uid="uid://d1sej87trg1h4" path="res://fonts/Sigmar-Regular.ttf" id="3_sigmar"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
 bg_color = Color(0.18, 0.8, 0.44, 1)
-corner_radius_top_left = 32
-corner_radius_top_right = 32
-corner_radius_bottom_left = 32
-corner_radius_bottom_right = 32
 border_width_bottom = 6
 border_color = Color(0.1, 0.52, 0.28, 1)
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
 shadow_color = Color(0, 0, 0, 0.18)
 shadow_size = 5
 shadow_offset = Vector2(0, 4)
-content_margin_left = 24.0
-content_margin_right = 24.0
-content_margin_top = 12.0
-content_margin_bottom = 12.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
 bg_color = Color(0.24, 0.9, 0.52, 1)
-corner_radius_top_left = 32
-corner_radius_top_right = 32
-corner_radius_bottom_left = 32
-corner_radius_bottom_right = 32
 border_width_bottom = 6
 border_color = Color(0.1, 0.52, 0.28, 1)
-content_margin_left = 24.0
-content_margin_right = 24.0
-content_margin_top = 12.0
-content_margin_bottom = 12.0
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node2D" unique_id=1661714227]
 script = ExtResource("1_main")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=823712051]
 offset_right = 720.0
 offset_bottom = 1280.0
+size_flags_vertical = 4
 color = Color(0.53, 0.81, 0.98, 1)
 
-[node name="Title" type="Label" parent="."]
-anchor_left = 0.0
+[node name="Title" type="Label" parent="." unique_id=607729940]
+anchors_preset = 10
 anchor_right = 1.0
-offset_top = 240.0
-offset_bottom = 400.0
+offset_left = 190.0
+offset_top = 263.0
+offset_right = 545.0
+offset_bottom = 423.0
+grow_horizontal = 2
+size_flags_vertical = 1
 theme = ExtResource("2_theme")
-theme_override_font_sizes/font_size = 56
 theme_override_colors/font_color = Color(0.38, 0.1, 0.68, 1)
-text = "🎓 Eşleştirme
+theme_override_fonts/font = ExtResource("3_sigmar")
+theme_override_font_sizes/font_size = 70
+text = "🎓 Eşleştirme 
 Oyunu"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Subtitle" type="Label" parent="."]
-anchor_left = 0.0
+[node name="Subtitle" type="Label" parent="." unique_id=563452214 node_paths=PackedStringArray("shortcut_context")]
+anchors_preset = 10
 anchor_right = 1.0
-offset_top = 408.0
-offset_bottom = 480.0
+offset_left = 131.0
+offset_top = 495.0
+offset_right = 603.0
+offset_bottom = 567.0
+grow_horizontal = 2
+size_flags_vertical = 1
+shortcut_context = NodePath(".")
 theme = ExtResource("2_theme")
-theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.9, 0.38, 0.08, 1)
-text = "4 Yaş  ·  Renkler  ·  Hayvanlar  ·  Meyveler"
+theme_override_font_sizes/font_size = 32
+text = "Renkler  ·  Hayvanlar  ·  Meyveler"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="StartButton" type="Button" parent="."]
+[node name="StartButton" type="Button" parent="." unique_id=1691066427]
+anchors_preset = 13
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -200.0
-offset_right = 200.0
-offset_top = 620.0
-offset_bottom = 750.0
+anchor_bottom = 1.0
+offset_left = 199.0
+offset_top = 922.0
+offset_right = 534.0
+offset_bottom = 1025.0
+grow_horizontal = 2
+grow_vertical = 2
 theme = ExtResource("2_theme")
-theme_override_font_sizes/font_size = 48
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_sigmar")
+theme_override_font_sizes/font_size = 48
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 text = "▶  Başla!"

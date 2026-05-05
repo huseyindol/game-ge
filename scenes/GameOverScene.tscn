@@ -1,80 +1,91 @@
-[gd_scene load_steps=5 format=3 uid="uid://b1over00000000"]
+[gd_scene format=3 uid="uid://cprcw578jyvnj"]
 
-[ext_resource type="Script" path="res://scripts/ui/GameOverScene.gd" id="1_go"]
-[ext_resource type="Theme" path="res://themes/GameTheme.tres" id="2_theme"]
+[ext_resource type="Script" uid="uid://dwuqaslwr16fc" path="res://scripts/ui/GameOverScene.gd" id="1_go"]
+[ext_resource type="Theme" uid="uid://d0sr855g4svyy" path="res://themes/GameTheme.tres" id="2_theme"]
+[ext_resource type="FontFile" uid="uid://d1sej87trg1h4" path="res://fonts/Sigmar-Regular.ttf" id="3_sigmar"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_retry"]
-bg_color = Color(1.0, 0.58, 0.0, 1)
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+bg_color = Color(1, 0.58, 0, 1)
+border_width_bottom = 6
+border_color = Color(0.75, 0.38, 0, 1)
 corner_radius_top_left = 32
 corner_radius_top_right = 32
-corner_radius_bottom_left = 32
 corner_radius_bottom_right = 32
-border_width_bottom = 6
-border_color = Color(0.75, 0.38, 0.0, 1)
+corner_radius_bottom_left = 32
 shadow_color = Color(0, 0, 0, 0.18)
 shadow_size = 5
 shadow_offset = Vector2(0, 4)
-content_margin_left = 24.0
-content_margin_right = 24.0
-content_margin_top = 12.0
-content_margin_bottom = 12.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_retry_hover"]
-bg_color = Color(1.0, 0.72, 0.18, 1)
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+bg_color = Color(1, 0.72, 0.18, 1)
+border_width_bottom = 6
+border_color = Color(0.75, 0.38, 0, 1)
 corner_radius_top_left = 32
 corner_radius_top_right = 32
-corner_radius_bottom_left = 32
 corner_radius_bottom_right = 32
-border_width_bottom = 6
-border_color = Color(0.75, 0.38, 0.0, 1)
-content_margin_left = 24.0
-content_margin_right = 24.0
-content_margin_top = 12.0
-content_margin_bottom = 12.0
+corner_radius_bottom_left = 32
 
-[node name="GameOverScene" type="Node2D"]
+[node name="GameOverScene" type="Node2D" unique_id=1013547329]
 script = ExtResource("1_go")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=2130985033]
 offset_right = 720.0
 offset_bottom = 1280.0
 color = Color(0.85, 0.74, 0.98, 1)
 
-[node name="Title" type="Label" parent="."]
-anchor_left = 0.0
+[node name="Title" type="Label" parent="." unique_id=1598245554]
+anchors_preset = 10
 anchor_right = 1.0
-offset_top = 360.0
-offset_bottom = 500.0
+offset_left = 122.0
+offset_top = 280.0
+offset_right = 563.0
+offset_bottom = 420.0
+grow_horizontal = 2
 theme = ExtResource("2_theme")
-theme_override_font_sizes/font_size = 64
 theme_override_colors/font_color = Color(0.55, 0.08, 0.65, 1)
+theme_override_fonts/font = ExtResource("3_sigmar")
+theme_override_font_sizes/font_size = 64
 text = "😢  Canlar Bitti!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Subtitle" type="Label" parent="."]
-anchor_left = 0.0
+[node name="Subtitle" type="Label" parent="." unique_id=696859483]
+anchors_preset = 10
 anchor_right = 1.0
-offset_top = 508.0
-offset_bottom = 590.0
+offset_left = 193.0
+offset_top = 442.0
+offset_right = 540.0
+offset_bottom = 524.0
+grow_horizontal = 2
 theme = ExtResource("2_theme")
-theme_override_font_sizes/font_size = 30
 theme_override_colors/font_color = Color(0.38, 0.1, 0.68, 1)
+theme_override_font_sizes/font_size = 30
 text = "Hadi tekrar deneyelim! 💪"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="RetryButton" type="Button" parent="."]
+[node name="RetryButton" type="Button" parent="." unique_id=833797086]
+anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -200.0
-offset_right = 200.0
-offset_top = 700.0
-offset_bottom = 830.0
+offset_left = 164.0
+offset_top = 886.0
+offset_right = 564.0
+offset_bottom = 1016.0
+grow_horizontal = 2
 theme = ExtResource("2_theme")
-theme_override_font_sizes/font_size = 44
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_sigmar")
+theme_override_font_sizes/font_size = 44
 theme_override_styles/normal = SubResource("StyleBoxFlat_retry")
-theme_override_styles/hover = SubResource("StyleBoxFlat_retry_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_retry")
+theme_override_styles/hover = SubResource("StyleBoxFlat_retry_hover")
 text = "🔄  Tekrar Dene"

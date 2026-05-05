@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=2 format=3 uid="uid://thgametheme01"]
 
-[ext_resource type="FontFile" path="res://fonts/Fredoka-Regular.ttf" id="1_font"]
+[ext_resource type="FontFile" uid="uid://cv2c4yu21k7tm" path="res://fonts/Roboto-Variable.ttf" id="1_font"]
 
 [resource]
 default_font = ExtResource("1_font")

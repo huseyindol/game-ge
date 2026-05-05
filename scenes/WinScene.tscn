@@ -1,51 +1,51 @@
-[gd_scene load_steps=6 format=3 uid="uid://b1win000000000"]
+[gd_scene format=3 uid="uid://cxel5578jyvnj"]
 
-[ext_resource type="Script" path="res://scripts/ui/WinScene.gd" id="1_win"]
-[ext_resource type="PackedScene" uid="uid://b1ppanel000000" path="res://scenes/ParentPanel.tscn" id="2_pp"]
-[ext_resource type="Theme" path="res://themes/GameTheme.tres" id="3_theme"]
+[ext_resource type="Script" uid="uid://bn3nkbl78a0ug" path="res://scripts/ui/WinScene.gd" id="1_win"]
+[ext_resource type="PackedScene" uid="uid://cqk7sjs8jyvnj" path="res://scenes/ParentPanel.tscn" id="2_pp"]
+[ext_resource type="Theme" uid="uid://d0sr855g4svyy" path="res://themes/GameTheme.tres" id="3_theme"]
+[ext_resource type="FontFile" uid="uid://d1sej87trg1h4" path="res://fonts/Sigmar-Regular.ttf" id="4_sigmar"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_again"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
 bg_color = Color(0.13, 0.59, 0.95, 1)
-corner_radius_top_left = 32
-corner_radius_top_right = 32
-corner_radius_bottom_left = 32
-corner_radius_bottom_right = 32
 border_width_bottom = 6
 border_color = Color(0.07, 0.36, 0.65, 1)
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
 shadow_color = Color(0, 0, 0, 0.18)
 shadow_size = 5
 shadow_offset = Vector2(0, 4)
-content_margin_left = 24.0
-content_margin_right = 24.0
-content_margin_top = 12.0
-content_margin_bottom = 12.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_again_hover"]
-bg_color = Color(0.22, 0.7, 1.0, 1)
-corner_radius_top_left = 32
-corner_radius_top_right = 32
-corner_radius_bottom_left = 32
-corner_radius_bottom_right = 32
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+bg_color = Color(0.22, 0.7, 1, 1)
 border_width_bottom = 6
 border_color = Color(0.07, 0.36, 0.65, 1)
-content_margin_left = 24.0
-content_margin_right = 24.0
-content_margin_top = 12.0
-content_margin_bottom = 12.0
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
 
-[node name="WinScene" type="Node2D"]
+[node name="WinScene" type="Node2D" unique_id=169381244]
 script = ExtResource("1_win")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=110720742]
 offset_right = 720.0
 offset_bottom = 1280.0
-color = Color(1.0, 0.93, 0.38, 1)
+color = Color(1, 0.93, 0.38, 1)
 
-[node name="Confetti" type="CPUParticles2D" parent="."]
+[node name="Confetti" type="CPUParticles2D" parent="." unique_id=818468304]
 position = Vector2(360, 1100)
 amount = 200
 lifetime = 3.5
-one_shot = false
 explosiveness = 0.25
 direction = Vector2(0, -1)
 spread = 65.0
@@ -56,47 +56,73 @@ scale_amount_min = 5.0
 scale_amount_max = 12.0
 color = Color(0.98, 0.4, 0.55, 1)
 
-[node name="Title" type="Label" parent="."]
-anchor_left = 0.0
+[node name="Title" type="Label" parent="." unique_id=510346703]
+anchors_preset = 10
 anchor_right = 1.0
-offset_top = 300.0
-offset_bottom = 520.0
+offset_left = 32.0
+offset_top = 160.0
+offset_right = 688.0
+offset_bottom = 400.0
+grow_horizontal = 2
 theme = ExtResource("3_theme")
-theme_override_font_sizes/font_size = 72
 theme_override_colors/font_color = Color(0.55, 0.08, 0.65, 1)
+theme_override_fonts/font = ExtResource("4_sigmar")
+theme_override_font_sizes/font_size = 72
+autowrap_mode = 3
 text = "Tebrikler
 Kazandın!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PlayAgain" type="Button" parent="."]
+[node name="ParentHint" type="Label" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 36.0
+offset_top = 412.0
+offset_right = 684.0
+offset_bottom = 612.0
+grow_horizontal = 2
+theme = ExtResource("3_theme")
+theme_override_colors/font_color = Color(0.38, 0.28, 0.08, 1)
+theme_override_font_sizes/font_size = 22
+autowrap_mode = 3
+text = "Ebeveynler için: Çocuğunuzun ilerleme ve istatistik özetini görmek için sağ alttaki 👪 simgesine dokunun."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayAgain" type="Button" parent="." unique_id=163146359]
+anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -200.0
-offset_right = 200.0
-offset_top = 620.0
-offset_bottom = 750.0
+offset_left = 166.0
+offset_top = 648.0
+offset_right = 566.0
+offset_bottom = 778.0
+grow_horizontal = 2
 theme = ExtResource("3_theme")
-theme_override_font_sizes/font_size = 40
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_sigmar")
+theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_again")
-theme_override_styles/hover = SubResource("StyleBoxFlat_again_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_again")
+theme_override_styles/hover = SubResource("StyleBoxFlat_again_hover")
 text = "▶  Tekrar Oyna"
 
-[node name="ParentIcon" type="Button" parent="."]
+[node name="ParentIcon" type="Button" parent="." unique_id=999753627]
+anchors_preset = 3
 anchor_left = 1.0
-anchor_right = 1.0
 anchor_top = 1.0
+anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -96.0
 offset_top = -96.0
 offset_right = -12.0
 offset_bottom = -12.0
-flat = true
+tooltip_text = "Ebeveyn Paneli"
 theme_override_font_sizes/font_size = 40
 text = "👪"
-tooltip_text = "Ebeveyn Paneli"
+flat = true
 
-[node name="ParentPanel" parent="." instance=ExtResource("2_pp")]
+[node name="ParentPanel" parent="." unique_id=441035873 instance=ExtResource("2_pp")]
 visible = false
+layout_mode = 3

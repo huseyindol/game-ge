@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/ui/LevelScene.gd" id="1_lvl"]
 [ext_resource type="Script" path="res://scripts/ui/HUD.gd" id="2_hud"]
 [ext_resource type="Theme" path="res://themes/GameTheme.tres" id="3_theme"]
+[ext_resource type="FontFile" uid="uid://d1sej87trg1h4" path="res://fonts/Sigmar-Regular.ttf" id="4_sigmar"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_flat"]
 
@@ -17,37 +18,37 @@ color = Color(0.6, 0.93, 0.8, 1)
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("2_hud")
 
-[node name="Top" type="MarginContainer" parent="HUD"]
-anchors_preset = 10
+[node name="MainLayout" type="MarginContainer" parent="HUD"]
+anchors_preset = 15
 anchor_right = 1.0
-offset_bottom = 160.0
+anchor_bottom = 1.0
 theme = ExtResource("3_theme")
 theme_override_constants/margin_left = 24
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_bottom = 24
 
-[node name="TopBar" type="HBoxContainer" parent="HUD/Top"]
-theme_override_constants/separation = 0
+[node name="RootVBox" type="VBoxContainer" parent="HUD/MainLayout"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 12
 
-[node name="HeartsContainer" type="HBoxContainer" parent="HUD/Top/TopBar"]
+[node name="TopBlock" type="VBoxContainer" parent="HUD/MainLayout/RootVBox"]
+theme_override_constants/separation = 10
+
+[node name="IconsRow" type="HBoxContainer" parent="HUD/MainLayout/RootVBox/TopBlock"]
+theme_override_constants/separation = 8
+
+[node name="HeartsContainer" type="HBoxContainer" parent="HUD/MainLayout/RootVBox/TopBlock/IconsRow"]
 size_flags_horizontal = 0
 theme_override_constants/separation = 6
 
-[node name="PromptBox" type="HBoxContainer" parent="HUD/Top/TopBar"]
+[node name="Spacer" type="Control" parent="HUD/MainLayout/RootVBox/TopBlock/IconsRow"]
+layout_mode = 2
 size_flags_horizontal = 3
-alignment = 1
-theme_override_constants/separation = 16
 
-[node name="PromptLabel" type="Label" parent="HUD/Top/TopBar/PromptBox"]
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 68
-theme_override_colors/font_color = Color(0.25, 0.08, 0.55, 1)
-text = "..."
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="PlaySoundButton" type="Button" parent="HUD/Top/TopBar/PromptBox"]
+[node name="PlaySoundButton" type="Button" parent="HUD/MainLayout/RootVBox/TopBlock/IconsRow"]
 custom_minimum_size = Vector2(64, 64)
 flat = true
 theme_override_font_sizes/font_size = 36
@@ -56,16 +57,20 @@ theme_override_styles/hover = SubResource("StyleBoxEmpty_flat")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_flat")
 text = "🔊"
 
-[node name="ChoicesArea" type="CenterContainer" parent="."]
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = 164.0
+[node name="PromptLabel" type="Label" parent="HUD/MainLayout/RootVBox/TopBlock"]
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 76
+theme_override_colors/font_color = Color(0.25, 0.08, 0.55, 1)
+autowrap_mode = 3
+text = "..."
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="ChoicesContainer" type="GridContainer" parent="ChoicesArea"]
-size_flags_horizontal = 4
-size_flags_vertical = 4
+[node name="ChoicesCenter" type="CenterContainer" parent="HUD/MainLayout/RootVBox"]
+size_flags_vertical = 3
+size_flags_horizontal = 3
+
+[node name="ChoicesContainer" type="GridContainer" parent="HUD/MainLayout/RootVBox/ChoicesCenter"]
 columns = 2
 theme_override_constants/h_separation = 24
 theme_override_constants/v_separation = 24
@@ -93,6 +98,7 @@ anchor_right = 1.0
 offset_top = 500.0
 offset_bottom = 680.0
 theme = ExtResource("3_theme")
+theme_override_fonts/font = ExtResource("4_sigmar")
 theme_override_font_sizes/font_size = 100
 theme_override_colors/font_color = Color(1, 0.35, 0.15, 1)
 text = "Harika!"

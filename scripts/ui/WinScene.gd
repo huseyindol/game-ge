@@ -1,6 +1,6 @@
 extends Node2D
 ## WinScene — Final ekranı.
-## Konfeti + "Tebrikler Kazandın!" bubble + sağ alt Ebeveyn ikonu.
+## Konfeti + iki satır tebrik metni + ebeveyn bilgi yazısı + sağ alt ebeveyn paneli ikonu.
 
 @onready var confetti: CPUParticles2D = $Confetti
 @onready var title: Label = $Title
@@ -18,16 +18,16 @@ func _ready() -> void:
 
 
 func _animate_title() -> void:
-	title.text = "🎉 Tebrikler Kazandın! 🎉"
-	title.scale = Vector2(0.4, 0.4)
+	# Tek satır + büyük scale editördekinden farklı taşır; iki satır + scale yok.
+	title.text = "🎉 Tebrikler\nKazandın! 🎉"
+	title.scale = Vector2.ONE
 	title.modulate.a = 0.0
-	var t := create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	t.tween_property(title, "modulate:a", 1.0, 0.4)
-	t.parallel().tween_property(title, "scale", Vector2(1.2, 1.2), 0.6)
-	t.tween_property(title, "scale", Vector2(1.0, 1.0), 0.2)
-	t.set_loops()
-	t.tween_property(title, "scale", Vector2(1.05, 1.05), 0.6)
-	t.tween_property(title, "scale", Vector2(1.0, 1.0), 0.6)
+	var t := create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	t.tween_property(title, "modulate:a", 1.0, 0.55)
+	await t.finished
+	var pulse := create_tween().set_loops()
+	pulse.tween_property(title, "modulate:a", 0.88, 0.55).set_trans(Tween.TRANS_SINE)
+	pulse.tween_property(title, "modulate:a", 1.0, 0.55).set_trans(Tween.TRANS_SINE)
 
 
 func _on_parent_pressed() -> void:

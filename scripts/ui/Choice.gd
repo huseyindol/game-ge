@@ -6,7 +6,7 @@ signal chose(key: String)
 
 enum Kind { CIRCLE, TEXT, IMAGE }
 
-const FONT_PATH := "res://fonts/Fredoka-Regular.ttf"
+const FONT_PATH := "res://fonts/Roboto-Variable.ttf"
 const BTN_SIZE := 200.0
 
 var key: String = ""
@@ -107,11 +107,13 @@ func _build_text() -> void:
 		lbl.add_theme_font_override("font", font)
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	lbl.clip_text = true
 	lbl.anchor_left = 0.0; lbl.anchor_right = 1.0
 	lbl.anchor_top = 0.0;  lbl.anchor_bottom = 1.0
 	lbl.offset_left = 6; lbl.offset_right = -6
 	lbl.offset_top = 6;  lbl.offset_bottom = -6
 	add_child(lbl)
+	call_deferred("_deferred_fit_text_label", lbl, label_text)
 
 
 # ── IMAGE / EMOJI ─────────────────────────────────────────────────────
@@ -167,13 +169,40 @@ func _build_image() -> void:
 	caption.anchor_left = 0.0; caption.anchor_right = 1.0
 	caption.anchor_top = 1.0;  caption.anchor_bottom = 1.0
 	caption.offset_top = -42; caption.offset_bottom = -4
+	caption.clip_text = true
 	add_child(caption)
+	call_deferred("_deferred_fit_caption", caption, label_text)
 
 
 func _load_font() -> FontFile:
 	if ResourceLoader.exists(FONT_PATH):
 		return load(FONT_PATH) as FontFile
 	return null
+
+
+func _deferred_fit_text_label(lbl: Label, line: String) -> void:
+	var max_w := maxf(BTN_SIZE - 20.0, 40.0)
+	_fit_label_line_to_width(lbl, line, 52, 20, max_w)
+
+
+func _deferred_fit_caption(lbl: Label, line: String) -> void:
+	var max_w := maxf(BTN_SIZE - 16.0, 40.0)
+	_fit_label_line_to_width(lbl, line, 20, 13, max_w)
+
+
+func _fit_label_line_to_width(lbl: Label, line: String, max_fs: int, min_fs: int, max_w: float) -> void:
+	if line.is_empty():
+		return
+	var font := lbl.get_theme_font("font")
+	if font == null:
+		lbl.add_theme_font_size_override("font_size", max_fs)
+		return
+	for sz in range(max_fs, min_fs - 1, -1):
+		var w := float(font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, sz).x)
+		if w <= max_w:
+			lbl.add_theme_font_size_override("font_size", sz)
+			return
+	lbl.add_theme_font_size_override("font_size", min_fs)
 
 
 # ── ETKİLEŞİM ────────────────────────────────────────────────────────

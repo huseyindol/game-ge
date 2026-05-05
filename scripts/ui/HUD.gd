@@ -4,9 +4,12 @@ class_name HUD
 ##
 ## "Süre veya sayaç GÖSTERİLMEZ" kuralı: bu node'ta hiçbir Timer label yoktur.
 
-@onready var hearts_container: HBoxContainer = $Top/TopBar/HeartsContainer
-@onready var prompt_label: Label = $Top/TopBar/PromptBox/PromptLabel
-@onready var play_sound_button: Button = $Top/TopBar/PromptBox/PlaySoundButton
+@onready var hearts_container: HBoxContainer = $MainLayout/RootVBox/TopBlock/IconsRow/HeartsContainer
+@onready var prompt_label: Label = $MainLayout/RootVBox/TopBlock/PromptLabel
+@onready var play_sound_button: Button = $MainLayout/RootVBox/TopBlock/IconsRow/PlaySoundButton
+
+const PROMPT_FONT_MAX := 76
+const PROMPT_FONT_MIN := 24
 
 const HEART_FULL := "♥"
 const HEART_EMPTY := "♡"
@@ -18,6 +21,7 @@ func _ready() -> void:
 	LevelManager.lives_changed.connect(_on_lives_changed)
 	LevelManager.level_started.connect(_on_level_started)
 	play_sound_button.pressed.connect(_on_play_sound_pressed)
+	prompt_label.resized.connect(_on_prompt_resized)
 	_on_lives_changed(LevelManager.lives)
 
 
@@ -42,6 +46,32 @@ func _on_lives_changed(remaining: int) -> void:
 func _on_level_started(level: Dictionary, _choices: Array) -> void:
 	prompt_label.text = GameData.get_display_name(level)
 	prompt_label.add_theme_color_override("font_color", GameData.get_prompt_color(level))
+	_fit_prompt_font.call_deferred()
+
+
+func _on_prompt_resized() -> void:
+	if prompt_label.text.is_empty():
+		return
+	_fit_prompt_font()
+
+
+func _fit_prompt_font() -> void:
+	var text := prompt_label.text
+	if text.is_empty():
+		return
+	var font := prompt_label.get_theme_font("font")
+	var max_w := float(prompt_label.size.x)
+	if max_w < 80.0:
+		max_w = 640.0
+	if font == null:
+		prompt_label.add_theme_font_size_override("font_size", PROMPT_FONT_MAX)
+		return
+	for sz in range(PROMPT_FONT_MAX, PROMPT_FONT_MIN - 1, -1):
+		var w := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, sz).x
+		if w <= max_w:
+			prompt_label.add_theme_font_size_override("font_size", sz)
+			return
+	prompt_label.add_theme_font_size_override("font_size", PROMPT_FONT_MIN)
 
 
 func _on_play_sound_pressed() -> void:

@@ -1,7 +1,7 @@
 extends Node2D
 ## Main — Açılış ekranı. "Başla" butonuna basınca yeni oyun başlar.
 
-@onready var start_button: Button = $Center/StartButton
+@onready var start_button: Button = $StartButton
 
 
 func _ready() -> void:
