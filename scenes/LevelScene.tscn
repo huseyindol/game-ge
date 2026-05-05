@@ -79,6 +79,7 @@ size_flags_vertical = 3
 size_flags_horizontal = 3
 
 [node name="ChoicesContainer" type="GridContainer" parent="HUD/MainLayout/RootVBox/ChoicesCenter"]
+unique_name_in_owner = true
 columns = 2
 theme_override_constants/h_separation = 24
 theme_override_constants/v_separation = 24

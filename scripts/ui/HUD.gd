@@ -22,7 +22,13 @@ func _ready() -> void:
 	LevelManager.level_started.connect(_on_level_started)
 	play_sound_button.pressed.connect(_on_play_sound_pressed)
 	prompt_label.resized.connect(_on_prompt_resized)
+	get_viewport().size_changed.connect(_on_viewport_size_changed)
 	_on_lives_changed(LevelManager.lives)
+
+
+func _on_viewport_size_changed() -> void:
+	if not prompt_label.text.is_empty():
+		_fit_prompt_font.call_deferred()
 
 
 func _build_hearts() -> void:

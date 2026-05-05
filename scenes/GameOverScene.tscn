@@ -33,21 +33,33 @@ corner_radius_top_right = 32
 corner_radius_bottom_right = 32
 corner_radius_bottom_left = 32
 
-[node name="GameOverScene" type="Node2D" unique_id=1013547329]
+[node name="GameOverScene" type="Node2D"]
 script = ExtResource("1_go")
 
-[node name="Background" type="ColorRect" parent="." unique_id=2130985033]
+[node name="Background" type="ColorRect" parent="."]
 offset_right = 720.0
 offset_bottom = 1280.0
 color = Color(0.85, 0.74, 0.98, 1)
 
-[node name="Title" type="Label" parent="." unique_id=1598245554]
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="UIRoot" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="UI/UIRoot"]
+layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 122.0
-offset_top = 280.0
-offset_right = 563.0
-offset_bottom = 420.0
+offset_left = 32.0
+offset_top = 220.0
+offset_right = -32.0
+offset_bottom = 400.0
 grow_horizontal = 2
 theme = ExtResource("2_theme")
 theme_override_colors/font_color = Color(0.55, 0.08, 0.65, 1)
@@ -57,13 +69,14 @@ text = "😢  Canlar Bitti!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Subtitle" type="Label" parent="." unique_id=696859483]
+[node name="Subtitle" type="Label" parent="UI/UIRoot"]
+layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 193.0
-offset_top = 442.0
-offset_right = 540.0
-offset_bottom = 524.0
+offset_left = 32.0
+offset_top = 420.0
+offset_right = -32.0
+offset_bottom = 520.0
 grow_horizontal = 2
 theme = ExtResource("2_theme")
 theme_override_colors/font_color = Color(0.38, 0.1, 0.68, 1)
@@ -72,14 +85,16 @@ text = "Hadi tekrar deneyelim! 💪"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="RetryButton" type="Button" parent="." unique_id=833797086]
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = 164.0
-offset_top = 886.0
-offset_right = 564.0
-offset_bottom = 1016.0
+[node name="RetryButton" type="Button" parent="UI/UIRoot"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 96.0
+offset_top = -280.0
+offset_right = -96.0
+offset_bottom = -136.0
 grow_horizontal = 2
 theme = ExtResource("2_theme")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
