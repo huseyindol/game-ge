@@ -1,37 +1,137 @@
-[gd_scene load_steps=3 format=3 uid="uid://b1ppanel000000"]
+[gd_scene load_steps=6 format=3 uid="uid://b1ppanel000000"]
 
 [ext_resource type="Script" path="res://scripts/ui/ParentPanel.gd" id="1_pp"]
 [ext_resource type="Theme" uid="uid://d0sr855g4svyy" path="res://themes/GameTheme.tres" id="2_theme"]
+[ext_resource type="Script" path="res://scripts/ui/ParentPopupChrome.gd" id="3_chrome"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_shell"]
+content_margin_left = 22
+content_margin_top = 22
+content_margin_right = 22
+content_margin_bottom = 22
+bg_color = Color(0.99, 0.972, 1, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 5
+border_color = Color(0.58, 0.38, 0.93, 1)
+corner_radius_top_left = 38
+corner_radius_top_right = 38
+corner_radius_bottom_right = 38
+corner_radius_bottom_left = 38
+shadow_color = Color(0.35, 0.22, 0.55, 0.42)
+shadow_size = 22
+shadow_offset = Vector2(0, 8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_close_go"]
+bg_color = Color(0.16, 0.52, 0.93, 1)
+border_width_bottom = 4
+border_color = Color(0.07, 0.36, 0.62, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+content_margin_left = 36
+content_margin_top = 10
+content_margin_right = 36
+content_margin_bottom = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_close_hover"]
+bg_color = Color(0.24, 0.62, 1, 1)
+border_width_bottom = 4
+border_color = Color(0.07, 0.36, 0.62, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+content_margin_left = 36
+content_margin_top = 10
+content_margin_right = 36
+content_margin_bottom = 14
 
 [node name="ParentPanel" type="Control"]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 0
 theme = ExtResource("2_theme")
 script = ExtResource("1_pp")
 
 [node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0, 0, 0, 0.55)
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.38, 0.18, 0.52, 0.48)
 
 [node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
-[node name="Background" type="PanelContainer" parent="Center"]
-custom_minimum_size = Vector2(560, 540)
+[node name="CardWrap" type="MarginContainer" parent="Center"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 36
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 44
 
-[node name="Content" type="VBoxContainer" parent="Center/Background"]
-theme_override_constants/separation = 12
+[node name="Stack" type="Control" parent="Center/CardWrap"]
+custom_minimum_size = Vector2(560, 580)
+layout_mode = 2
+clip_contents = false
 
-[node name="CloseButton" type="Button" parent="Center/Background"]
-custom_minimum_size = Vector2(80, 40)
-offset_left = 460.0
-offset_top = 8.0
-offset_right = 540.0
-offset_bottom = 48.0
-text = "Kapat"
+[node name="PopupChrome" type="Control" parent="Center/CardWrap/Stack"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_chrome")
+
+[node name="Shell" type="PanelContainer" parent="Center/CardWrap/Stack"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBox_shell")
+
+[node name="VBox" type="VBoxContainer" parent="Center/CardWrap/Stack/Shell"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Content" type="VBoxContainer" parent="Center/CardWrap/Stack/Shell/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="FooterBar" type="HBoxContainer" parent="Center/CardWrap/Stack/Shell/VBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="CloseButton" type="Button" parent="Center/CardWrap/Stack/Shell/VBox/FooterBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBox_close_go")
+theme_override_styles/pressed = SubResource("StyleBox_close_go")
+theme_override_styles/hover = SubResource("StyleBox_close_hover")
+text = "✓  Kapat"
