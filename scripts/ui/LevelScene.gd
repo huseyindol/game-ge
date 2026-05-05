@@ -3,7 +3,7 @@ extends Node2D
 ##
 ## LevelManager state'i tutar; biz onu DİNLER ve görselleştiririz.
 
-@onready var choices_container: GridContainer = $ChoicesContainer
+@onready var choices_container: GridContainer = $ChoicesArea/ChoicesContainer
 @onready var confetti: CPUParticles2D = $FXLayer/Confetti
 @onready var bubble_text: Label = $FXLayer/BubbleText
 

@@ -4,9 +4,9 @@ class_name HUD
 ##
 ## "Süre veya sayaç GÖSTERİLMEZ" kuralı: bu node'ta hiçbir Timer label yoktur.
 
-@onready var hearts_container: HBoxContainer = $Top/HeartsContainer
-@onready var prompt_label: Label = $Top/PromptBox/PromptLabel
-@onready var play_sound_button: Button = $Top/PromptBox/PlaySoundButton
+@onready var hearts_container: HBoxContainer = $Top/TopBar/HeartsContainer
+@onready var prompt_label: Label = $Top/TopBar/PromptBox/PromptLabel
+@onready var play_sound_button: Button = $Top/TopBar/PromptBox/PlaySoundButton
 
 const HEART_FULL := "♥"
 const HEART_EMPTY := "♡"
