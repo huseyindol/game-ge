@@ -34,6 +34,9 @@ func _on_level_started(level: Dictionary, choice_keys: Array) -> void:
 		c.chose.connect(_on_choice_chose)
 		_choice_nodes.append(c)
 
+	# Seviye başladığında hedefi seslendir.
+	AudioManager.speak_word(GameData.get_display_name(level))
+
 
 func _clear_choices() -> void:
 	for c in _choice_nodes:
@@ -61,10 +64,12 @@ func _build_choice_for(level: Dictionary, key: String) -> Choice:
 					GameData.COLORS[key].hex, "", null)
 		"animal":
 			c.configure(key, Choice.Kind.IMAGE, Color.WHITE,
-				GameData.ANIMALS[key].tr, _safe_load_texture(GameData.ANIMALS[key].img))
+				GameData.ANIMALS[key].tr, _safe_load_texture(GameData.ANIMALS[key].img),
+				GameData.ANIMALS[key].get("emoji", ""))
 		"fruit":
 			c.configure(key, Choice.Kind.IMAGE, Color.WHITE,
-				GameData.FRUITS[key].tr, _safe_load_texture(GameData.FRUITS[key].img))
+				GameData.FRUITS[key].tr, _safe_load_texture(GameData.FRUITS[key].img),
+				GameData.FRUITS[key].get("emoji", ""))
 	return c
 
 

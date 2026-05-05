@@ -27,25 +27,25 @@ const COLORS := {
 }
 
 const ANIMALS := {
-	"cat":    {"tr": "KEDİ",     "img": "res://assets/images/animals/cat.png",     "sfx": "res://assets/sfx/cat.ogg"},
-	"dog":    {"tr": "KÖPEK",    "img": "res://assets/images/animals/dog.png",     "sfx": "res://assets/sfx/dog.ogg"},
-	"cow":    {"tr": "İNEK",     "img": "res://assets/images/animals/cow.png",     "sfx": "res://assets/sfx/cow.ogg"},
-	"sheep":  {"tr": "KOYUN",    "img": "res://assets/images/animals/sheep.png",   "sfx": "res://assets/sfx/sheep.ogg"},
-	"horse":  {"tr": "AT",       "img": "res://assets/images/animals/horse.png",   "sfx": "res://assets/sfx/horse.ogg"},
-	"rabbit": {"tr": "TAVŞAN",   "img": "res://assets/images/animals/rabbit.png",  "sfx": "res://assets/sfx/rabbit.ogg"},
-	"bird":   {"tr": "KUŞ",      "img": "res://assets/images/animals/bird.png",    "sfx": "res://assets/sfx/bird.ogg"},
-	"fish":   {"tr": "BALIK",    "img": "res://assets/images/animals/fish.png",    "sfx": "res://assets/sfx/fish.ogg"},
+	"cat":    {"tr": "KEDİ",   "emoji": "🐱", "img": "res://assets/images/animals/cat.png",    "sfx": "res://assets/sfx/cat.ogg"},
+	"dog":    {"tr": "KÖPEK",  "emoji": "🐶", "img": "res://assets/images/animals/dog.png",    "sfx": "res://assets/sfx/dog.ogg"},
+	"cow":    {"tr": "İNEK",   "emoji": "🐄", "img": "res://assets/images/animals/cow.png",    "sfx": "res://assets/sfx/cow.ogg"},
+	"sheep":  {"tr": "KOYUN",  "emoji": "🐑", "img": "res://assets/images/animals/sheep.png",  "sfx": "res://assets/sfx/sheep.ogg"},
+	"horse":  {"tr": "AT",     "emoji": "🐴", "img": "res://assets/images/animals/horse.png",  "sfx": "res://assets/sfx/horse.ogg"},
+	"rabbit": {"tr": "TAVŞAN", "emoji": "🐰", "img": "res://assets/images/animals/rabbit.png", "sfx": "res://assets/sfx/rabbit.ogg"},
+	"bird":   {"tr": "KUŞ",    "emoji": "🐦", "img": "res://assets/images/animals/bird.png",   "sfx": "res://assets/sfx/bird.ogg"},
+	"fish":   {"tr": "BALIK",  "emoji": "🐟", "img": "res://assets/images/animals/fish.png",   "sfx": "res://assets/sfx/fish.ogg"},
 }
 
 const FRUITS := {
-	"apple":      {"tr": "ELMA",     "img": "res://assets/images/fruits/apple.png",      "sfx": "res://assets/sfx/apple.ogg"},
-	"banana":     {"tr": "MUZ",      "img": "res://assets/images/fruits/banana.png",     "sfx": "res://assets/sfx/banana.ogg"},
-	"strawberry": {"tr": "ÇİLEK",    "img": "res://assets/images/fruits/strawberry.png", "sfx": "res://assets/sfx/strawberry.ogg"},
-	"orange":     {"tr": "PORTAKAL", "img": "res://assets/images/fruits/orange.png",     "sfx": "res://assets/sfx/orange.ogg"},
-	"grape":      {"tr": "ÜZÜM",     "img": "res://assets/images/fruits/grape.png",      "sfx": "res://assets/sfx/grape.ogg"},
-	"watermelon": {"tr": "KARPUZ",   "img": "res://assets/images/fruits/watermelon.png", "sfx": "res://assets/sfx/watermelon.ogg"},
-	"pear":       {"tr": "ARMUT",    "img": "res://assets/images/fruits/pear.png",       "sfx": "res://assets/sfx/pear.ogg"},
-	"cherry":     {"tr": "KİRAZ",    "img": "res://assets/images/fruits/cherry.png",     "sfx": "res://assets/sfx/cherry.ogg"},
+	"apple":      {"tr": "ELMA",     "emoji": "🍎", "img": "res://assets/images/fruits/apple.png",      "sfx": "res://assets/sfx/apple.ogg"},
+	"banana":     {"tr": "MUZ",      "emoji": "🍌", "img": "res://assets/images/fruits/banana.png",     "sfx": "res://assets/sfx/banana.ogg"},
+	"strawberry": {"tr": "ÇİLEK",   "emoji": "🍓", "img": "res://assets/images/fruits/strawberry.png", "sfx": "res://assets/sfx/strawberry.ogg"},
+	"orange":     {"tr": "PORTAKAL", "emoji": "🍊", "img": "res://assets/images/fruits/orange.png",     "sfx": "res://assets/sfx/orange.ogg"},
+	"grape":      {"tr": "ÜZÜM",    "emoji": "🍇", "img": "res://assets/images/fruits/grape.png",      "sfx": "res://assets/sfx/grape.ogg"},
+	"watermelon": {"tr": "KARPUZ",   "emoji": "🍉", "img": "res://assets/images/fruits/watermelon.png", "sfx": "res://assets/sfx/watermelon.ogg"},
+	"pear":       {"tr": "ARMUT",    "emoji": "🍐", "img": "res://assets/images/fruits/pear.png",       "sfx": "res://assets/sfx/pear.ogg"},
+	"cherry":     {"tr": "KİRAZ",   "emoji": "🍒", "img": "res://assets/images/fruits/cherry.png",     "sfx": "res://assets/sfx/cherry.ogg"},
 }
 
 # 24 seviyenin tanımı. (level_id, type, target_key, distractor_keys, num_choices)

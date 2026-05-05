@@ -1,7 +1,7 @@
 extends Node
 ## AudioManager — Tüm ses çıktılarının tek noktası (Autoload Singleton).
 ##
-## SFX dosyaları yoksa sessiz fallback (uyarı log'lanır, oyun durmaz).
+## Ses dosyası yoksa TTS (sistem sesi sentezi) ile fallback yapar.
 
 const TAG := "AudioManager"
 
@@ -14,6 +14,7 @@ const SFX := {
 
 var _player: AudioStreamPlayer
 var _word_player: AudioStreamPlayer
+var _tts_voice_id: String = ""
 
 
 func _ready() -> void:
@@ -25,7 +26,23 @@ func _ready() -> void:
 	_word_player.bus = "Master"
 	add_child(_word_player)
 
+	_init_tts()
 	Log.info(TAG, "AudioManager hazır.")
+
+
+func _init_tts() -> void:
+	if not DisplayServer.has_feature(DisplayServer.FEATURE_TEXT_TO_SPEECH):
+		Log.warn(TAG, "Bu platformda TTS desteklenmiyor.")
+		return
+	var voices := DisplayServer.tts_get_voices()
+	for v in voices:
+		if v.language.begins_with("tr"):
+			_tts_voice_id = v.id
+			Log.debug(TAG, "Türkçe TTS sesi: %s" % v.id)
+			return
+	if voices.size() > 0:
+		_tts_voice_id = voices[0].id
+		Log.warn(TAG, "Türkçe ses bulunamadı, varsayılan: %s" % _tts_voice_id)
 
 
 ## Sabit SFX adı ile çal.
@@ -37,11 +54,27 @@ func play_sfx(name: String) -> void:
 	_play_path(_player, path)
 
 
-## Hayvan/meyve sesi gibi runtime path için.
-func play_word(path: String) -> void:
-	if path.is_empty():
+## Ses dosyası varsa çal, yoksa TTS ile seslendir.
+func play_or_speak(sfx_path: String, fallback_text: String) -> void:
+	if not sfx_path.is_empty() and ResourceLoader.exists(sfx_path):
+		_play_path(_word_player, sfx_path)
+	else:
+		_speak_tts(fallback_text)
+
+
+## Kelimeyi sistem TTS ile seslendir.
+func speak_word(text: String) -> void:
+	_speak_tts(text)
+
+
+func _speak_tts(text: String) -> void:
+	if _tts_voice_id.is_empty():
+		Log.warn(TAG, "TTS sesi yok, atlanıyor: %s" % text)
 		return
-	_play_path(_word_player, path)
+	if DisplayServer.tts_is_speaking():
+		DisplayServer.tts_stop()
+	DisplayServer.tts_speak(text, _tts_voice_id, 90, 0.9, 1.0)
+	Log.debug(TAG, "TTS: %s" % text)
 
 
 func _play_path(player: AudioStreamPlayer, path: String) -> void:

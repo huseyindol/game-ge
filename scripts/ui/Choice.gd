@@ -1,137 +1,200 @@
 extends Button
 class_name Choice
 ## Tek bir seçenek butonu (renkli daire, renk yazısı, hayvan/meyve görseli).
-##
-## LevelScene tarafından runtime'da configure() çağrısıyla doldurulur.
-## "Çoklu yanlışta sadece 1 can" kuralı LevelManager'da çözülür — bu sınıf
-## yalnızca görsel davranıştan (shake, fade) sorumludur.
 
 signal chose(key: String)
 
 enum Kind { CIRCLE, TEXT, IMAGE }
 
-@export var key: String = ""
-@export var kind: Kind = Kind.CIRCLE
-@export var color: Color = Color.WHITE
-@export var label_text: String = ""
-@export var texture: Texture2D = null
+const FONT_PATH := "res://fonts/Fredoka-Regular.ttf"
+const BTN_SIZE := 200.0
 
-var _is_disabled_after_correct: bool = false
-const SHAKE_PIXELS := 12.0
+var key: String = ""
+var kind: Kind = Kind.CIRCLE
+var color: Color = Color.WHITE
+var label_text: String = ""
+var texture: Texture2D = null
+var emoji: String = ""
+
+var _is_disabled: bool = false
+var _configured: bool = false
+
+const SHAKE_PIXELS := 14.0
 const SHAKE_DURATION := 0.35
 
 
 func configure(p_key: String, p_kind: Kind, p_color: Color,
-		p_label: String, p_texture: Texture2D) -> void:
+		p_label: String, p_texture: Texture2D, p_emoji: String = "") -> void:
 	key = p_key
 	kind = p_kind
 	color = p_color
 	label_text = p_label
 	texture = p_texture
+	emoji = p_emoji
+	_configured = true
 	_apply_visuals()
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(160, 160)
+	custom_minimum_size = Vector2(BTN_SIZE, BTN_SIZE)
 	pressed.connect(_on_pressed)
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	_apply_visuals()
+	if not _configured:
+		_apply_visuals()
 
 
 func _apply_visuals() -> void:
-	# Çocuk node'ları temizle (yeniden configure için).
 	for c in get_children():
 		c.queue_free()
-
 	match kind:
-		Kind.CIRCLE:
-			_build_circle()
-		Kind.TEXT:
-			_build_text()
-		Kind.IMAGE:
-			_build_image()
+		Kind.CIRCLE: _build_circle()
+		Kind.TEXT:   _build_text()
+		Kind.IMAGE:  _build_image()
 
 
+# ── CIRCLE ────────────────────────────────────────────────────────────
 func _build_circle() -> void:
 	flat = false
 	text = ""
-	# Yuvarlak StyleBox — köşe yarıçapı yüksek tutulunca daire elde edilir.
+	var sb := _make_circle_stylebox(color)
+	add_theme_stylebox_override("normal", sb)
+	add_theme_stylebox_override("hover", sb)
+	add_theme_stylebox_override("pressed", sb)
+	add_theme_stylebox_override("disabled", sb)
+
+
+func _make_circle_stylebox(c: Color) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = color
+	sb.bg_color = c
 	sb.corner_radius_top_left = 999
 	sb.corner_radius_top_right = 999
 	sb.corner_radius_bottom_left = 999
 	sb.corner_radius_bottom_right = 999
+	sb.border_width_top = 5
+	sb.border_width_bottom = 5
+	sb.border_width_left = 5
+	sb.border_width_right = 5
+	sb.border_color = c.darkened(0.22)
+	return sb
+
+
+# ── TEXT ──────────────────────────────────────────────────────────────
+func _build_text() -> void:
+	flat = false
+	text = ""
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color.WHITE
+	sb.corner_radius_top_left = 24
+	sb.corner_radius_top_right = 24
+	sb.corner_radius_bottom_left = 24
+	sb.corner_radius_bottom_right = 24
+	sb.border_width_top = 6
+	sb.border_width_bottom = 6
+	sb.border_width_left = 6
+	sb.border_width_right = 6
+	sb.border_color = color
+	add_theme_stylebox_override("normal", sb)
+	add_theme_stylebox_override("hover", sb)
+	add_theme_stylebox_override("pressed", sb)
+	add_theme_stylebox_override("disabled", sb)
+
+	var lbl := Label.new()
+	lbl.text = label_text
+	lbl.add_theme_color_override("font_color", color.darkened(0.1))
+	lbl.add_theme_font_size_override("font_size", 52)
+	var font := _load_font()
+	if font:
+		lbl.add_theme_font_override("font", font)
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	lbl.anchor_left = 0.0; lbl.anchor_right = 1.0
+	lbl.anchor_top = 0.0;  lbl.anchor_bottom = 1.0
+	lbl.offset_left = 6; lbl.offset_right = -6
+	lbl.offset_top = 6;  lbl.offset_bottom = -6
+	add_child(lbl)
+
+
+# ── IMAGE / EMOJI ─────────────────────────────────────────────────────
+func _build_image() -> void:
+	flat = false
+	text = ""
+
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(1, 1, 1, 0.9)
+	sb.corner_radius_top_left = 24
+	sb.corner_radius_top_right = 24
+	sb.corner_radius_bottom_left = 24
+	sb.corner_radius_bottom_right = 24
 	sb.border_width_top = 4
 	sb.border_width_bottom = 4
 	sb.border_width_left = 4
 	sb.border_width_right = 4
-	sb.border_color = color.darkened(0.2)
+	sb.border_color = Color(0.85, 0.85, 0.85, 1)
 	add_theme_stylebox_override("normal", sb)
 	add_theme_stylebox_override("hover", sb)
 	add_theme_stylebox_override("pressed", sb)
+	add_theme_stylebox_override("disabled", sb)
 
-
-func _build_text() -> void:
-	flat = true
-	text = ""
-	var lbl := Label.new()
-	lbl.name = "TextLabel"
-	lbl.text = label_text
-	lbl.add_theme_color_override("font_color", color)
-	lbl.add_theme_font_size_override("font_size", 48)
-	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	lbl.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(lbl)
-
-
-func _build_image() -> void:
-	flat = true
-	text = ""
 	if texture != null:
 		var img := TextureRect.new()
-		img.name = "Img"
 		img.texture = texture
 		img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		img.set_anchors_preset(Control.PRESET_FULL_RECT)
+		img.anchor_left = 0.0; img.anchor_right = 1.0
+		img.anchor_top = 0.0;  img.anchor_bottom = 1.0
+		img.offset_bottom = -44
 		add_child(img)
-	# Görsel altına Türkçe ad da yazalım (öğretici).
+	elif not emoji.is_empty():
+		var emo := Label.new()
+		emo.text = emoji
+		emo.add_theme_font_size_override("font_size", 80)
+		emo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		emo.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		emo.anchor_left = 0.0; emo.anchor_right = 1.0
+		emo.anchor_top = 0.0;  emo.anchor_bottom = 1.0
+		emo.offset_bottom = -44
+		add_child(emo)
+
 	var caption := Label.new()
 	caption.text = label_text
-	caption.add_theme_font_size_override("font_size", 24)
+	caption.add_theme_font_size_override("font_size", 20)
+	caption.add_theme_color_override("font_color", Color(0.25, 0.1, 0.45, 1))
+	var font := _load_font()
+	if font:
+		caption.add_theme_font_override("font", font)
 	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	caption.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	caption.position.y = -28
+	caption.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	caption.anchor_left = 0.0; caption.anchor_right = 1.0
+	caption.anchor_top = 1.0;  caption.anchor_bottom = 1.0
+	caption.offset_top = -42; caption.offset_bottom = -4
 	add_child(caption)
 
 
-# =====================================================================
-#  ETKİLEŞİM — shake / fade
-# =====================================================================
+func _load_font() -> FontFile:
+	if ResourceLoader.exists(FONT_PATH):
+		return load(FONT_PATH) as FontFile
+	return null
+
+
+# ── ETKİLEŞİM ────────────────────────────────────────────────────────
 
 func _on_pressed() -> void:
-	if _is_disabled_after_correct:
+	if _is_disabled:
 		return
 	chose.emit(key)
 
 
-## LevelScene yanlış cevap olduğunda çağırır.
 func play_wrong_animation() -> void:
 	var orig_pos := position
-	var t := create_tween()
-	t.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	# Shake
+	var t := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	for i in 4:
 		t.tween_property(self, "position:x", orig_pos.x - SHAKE_PIXELS, SHAKE_DURATION / 8.0)
 		t.tween_property(self, "position:x", orig_pos.x + SHAKE_PIXELS, SHAKE_DURATION / 8.0)
 	t.tween_property(self, "position", orig_pos, 0.05)
-	# Fade
-	t.parallel().tween_property(self, "modulate:a", 0.25, SHAKE_DURATION)
+	t.parallel().tween_property(self, "modulate:a", 0.3, SHAKE_DURATION)
 
 
-## LevelScene doğru cevap olduğunda diğer butonları kilitler.
 func disable_after_correct() -> void:
-	_is_disabled_after_correct = true
-	disabled = true
+	_is_disabled = true
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mouse_default_cursor_shape = Control.CURSOR_ARROW

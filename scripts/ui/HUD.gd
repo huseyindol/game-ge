@@ -48,11 +48,11 @@ func _on_play_sound_pressed() -> void:
 	var lv := LevelManager.get_current_level()
 	if lv.is_empty():
 		return
-	# Hayvan/meyve seviyelerinde özel ses; renklerde click.
+	# Hayvan/meyve seviyelerinde özel ses veya TTS; renklerde TTS.
 	match lv.type:
 		"animal":
-			AudioManager.play_word(GameData.ANIMALS[lv.target].sfx)
+			AudioManager.play_or_speak(GameData.ANIMALS[lv.target].sfx, GameData.ANIMALS[lv.target].tr)
 		"fruit":
-			AudioManager.play_word(GameData.FRUITS[lv.target].sfx)
+			AudioManager.play_or_speak(GameData.FRUITS[lv.target].sfx, GameData.FRUITS[lv.target].tr)
 		_:
-			AudioManager.play_sfx("click")
+			AudioManager.speak_word(GameData.COLORS[lv.target].tr)
