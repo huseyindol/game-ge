@@ -54,6 +54,30 @@ Yeni session başlamadan önce mutlaka oku — aynı araştırmayı tekrar yapma
 
 ---
 
+## [2026-05-05] — Bubble Font + Renkler + Ortalama
+
+### Yapılanlar
+- `fonts/Fredoka-Regular.ttf` indirildi (Google Fonts CDN, 48KB)
+- `themes/GameTheme.tres` oluşturuldu (default_font + default_font_size=32)
+- 4 sahneye tema uygulandı + renkler değiştirildi:
+  - Main: gökyüzü mavisi bg, mor başlık, yeşil buton
+  - LevelScene: nane yeşili bg, mor prompt rengi
+  - WinScene: altın sarısı bg, mavi "Tekrar Oyna" butonu
+  - GameOverScene: lavanta bg, turuncu "Tekrar Dene" butonu
+- **Ortalama sorunu çözüldü:**
+  - `MarginContainer` (HUD/Top) iki child alıyordu → üst üste biniyordu
+  - `TopBar (HBoxContainer)` eklendi → HeartsContainer + PromptBox doğru yanyana
+  - `ChoicesContainer (GridContainer)` → `ChoicesArea (CenterContainer)` içine alındı
+  - CenterContainer sayesinde seçenekler ekranda ortalanıyor
+- HUD.gd path'ları: `$Top/HeartsContainer` → `$Top/TopBar/HeartsContainer`
+- LevelScene.gd path'ı: `$ChoicesContainer` → `$ChoicesArea/ChoicesContainer`
+
+### Dikkat
+- Godot 4.6 native `Logger` sınıfı var → autoload adı `Log` kullanılıyor (`Logger` değil)
+- `class_name` ile Godot native sınıf adlarını gizleme
+
+---
+
 ## Şablon: Yeni Not Ekleme
 
 ```
