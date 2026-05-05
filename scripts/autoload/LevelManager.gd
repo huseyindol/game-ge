@@ -27,6 +27,9 @@ const LEVEL_SCENE_PATH := "res://scenes/LevelScene.tscn"
 const WIN_SCENE_PATH   := "res://scenes/WinScene.tscn"
 const GAME_OVER_PATH   := "res://scenes/GameOverScene.tscn"
 
+## Yayın için 0 yapın. 0'dan büyükse bu kadar doğru cevap sonrası kazanma ekranına git (UI test).
+const WIN_AFTER_CORRECT_FOR_TEST: int = 3
+
 # =====================================================================
 #  STATE
 # =====================================================================
@@ -36,6 +39,7 @@ var _current_level: Dictionary = {}
 var _current_choices: Array[String] = []
 # Aynı seviyede birden çok yanlışta sadece 1 can düşsün diye:
 var _life_lost_in_current_level: bool = false
+var _correct_answers_this_run: int = 0
 
 
 func _ready() -> void:
@@ -50,6 +54,7 @@ func _ready() -> void:
 func start_new_game(reset_analytics: bool = false) -> void:
 	current_level_id = 1
 	lives = GameData.MAX_LIVES
+	_correct_answers_this_run = 0
 	if reset_analytics:
 		AnalyticsManager.reset_all()
 	Log.info(TAG, "Yeni oyun başladı. Can=%d" % lives)
@@ -90,6 +95,7 @@ func submit_answer(chosen_key: String) -> void:
 
 	if is_correct:
 		AudioManager.play_sfx("correct")
+		_correct_answers_this_run += 1
 		Log.info(TAG, "Doğru! Seviye %d tamamlandı." % _current_level.id)
 		_advance_after_delay()
 	else:
@@ -130,6 +136,12 @@ func _trigger_game_over() -> void:
 func _advance_after_delay() -> void:
 	# Konfeti animasyonu için bekle.
 	await get_tree().create_timer(1.6).timeout
+
+	if WIN_AFTER_CORRECT_FOR_TEST > 0 and _correct_answers_this_run >= WIN_AFTER_CORRECT_FOR_TEST:
+		Log.info(TAG, "Test modu: %d doğru ile kazanma ekranı." % WIN_AFTER_CORRECT_FOR_TEST)
+		game_won.emit()
+		get_tree().change_scene_to_file(WIN_SCENE_PATH)
+		return
 
 	if current_level_id >= GameData.TOTAL_LEVELS:
 		Log.info(TAG, "Tüm seviyeler tamamlandı 🎉")

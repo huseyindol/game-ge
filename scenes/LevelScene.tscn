@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://b1level0000000"]
+[gd_scene load_steps=7 format=3 uid="uid://b1level0000000"]
 
 [ext_resource type="Script" path="res://scripts/ui/LevelScene.gd" id="1_lvl"]
 [ext_resource type="Script" path="res://scripts/ui/HUD.gd" id="2_hud"]
@@ -7,6 +7,13 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_flat"]
 
+[sub_resource type="Gradient" id="Gradient_confetti_colors"]
+offsets = PackedFloat32Array(0, 0.15, 0.3, 0.45, 0.58, 0.72, 0.86, 1)
+colors = PackedColorArray(1, 0.18, 0.45, 1, 1, 0.88, 0.12, 1, 0.12, 0.88, 0.55, 1, 0.2, 0.55, 1, 1, 1, 0.45, 0.92, 1, 0.65, 0.38, 1, 1, 1, 0.5, 0.12, 1, 1, 0.25, 0.35, 1)
+
+[sub_resource type="Gradient" id="Gradient_confetti_alpha"]
+offsets = PackedFloat32Array(0, 0.55, 0.82, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.55, 1, 1, 1, 0)
 [node name="LevelScene" type="Node2D"]
 script = ExtResource("1_lvl")
 
@@ -59,6 +66,7 @@ text = "🔊"
 
 [node name="PromptLabel" type="Label" parent="HUD/MainLayout/RootVBox/TopBlock"]
 size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("4_sigmar")
 theme_override_font_sizes/font_size = 76
 theme_override_colors/font_color = Color(0.25, 0.08, 0.55, 1)
 autowrap_mode = 3
@@ -78,19 +86,32 @@ theme_override_constants/v_separation = 24
 [node name="FXLayer" type="CanvasLayer" parent="."]
 
 [node name="Confetti" type="CPUParticles2D" parent="FXLayer"]
-position = Vector2(360, 1000)
-amount = 80
-lifetime = 2.5
+z_index = 8
+position = Vector2(360, 1060)
+emitting = false
+amount = 200
+lifetime = 3.0
 one_shot = true
-explosiveness = 0.7
+explosiveness = 0.93
+randomness = 0.48
+lifetime_randomness = 0.35
+emission_shape = 3
+emission_rect_extents = Vector2(300, 40)
 direction = Vector2(0, -1)
-spread = 55.0
-gravity = Vector2(0, 350)
-initial_velocity_min = 400.0
-initial_velocity_max = 700.0
-scale_amount_min = 5.0
-scale_amount_max = 10.0
-color = Color(1, 0.8, 0.2, 1)
+spread = 96.0
+gravity = Vector2(18, 305)
+initial_velocity_min = 200.0
+initial_velocity_max = 760.0
+angular_velocity_min = -380.0
+angular_velocity_max = 380.0
+angle_min = -180.0
+angle_max = 180.0
+scale_amount_min = 3.0
+scale_amount_max = 13.0
+scale_amount_random = 0.92
+color = Color(1, 1, 1, 1)
+color_initial_ramp = SubResource("Gradient_confetti_colors")
+color_ramp = SubResource("Gradient_confetti_alpha")
 
 [node name="BubbleText" type="Label" parent="FXLayer"]
 anchor_left = 0.0

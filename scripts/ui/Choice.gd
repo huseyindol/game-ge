@@ -6,7 +6,7 @@ signal chose(key: String)
 
 enum Kind { CIRCLE, TEXT, IMAGE }
 
-const FONT_PATH := "res://fonts/Roboto-Variable.ttf"
+const FONT_PATH := "res://fonts/Sigmar-Regular.ttf"
 const BTN_SIZE := 200.0
 
 var key: String = ""

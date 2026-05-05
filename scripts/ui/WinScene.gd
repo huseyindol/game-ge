@@ -3,10 +3,10 @@ extends Node2D
 ## Konfeti + iki satır tebrik metni + ebeveyn bilgi yazısı + sağ alt ebeveyn paneli ikonu.
 
 @onready var confetti: CPUParticles2D = $Confetti
-@onready var title: Label = $Title
-@onready var parent_button: Button = $ParentIcon
-@onready var parent_panel: ParentPanel = $ParentPanel
-@onready var play_again: Button = $PlayAgain
+@onready var title: Label = $UI/UIRoot/Title
+@onready var parent_button: Button = $UI/UIRoot/ParentIcon
+@onready var parent_panel: ParentPanel = $UI/ParentPanel
+@onready var play_again: Button = $UI/UIRoot/PlayAgain
 
 
 func _ready() -> void:

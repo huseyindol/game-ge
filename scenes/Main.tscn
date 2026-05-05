@@ -60,22 +60,18 @@ Oyunu"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Subtitle" type="Label" parent="." unique_id=563452214 node_paths=PackedStringArray("shortcut_context")]
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = 131.0
-offset_top = 495.0
-offset_right = 603.0
-offset_bottom = 567.0
-grow_horizontal = 2
-size_flags_vertical = 1
-shortcut_context = NodePath(".")
+[node name="Subtitle" type="RichTextLabel" parent="."]
+offset_left = 48.0
+offset_top = 485.0
+offset_right = 672.0
+offset_bottom = 590.0
+scroll_active = false
+bbcode_enabled = true
 theme = ExtResource("2_theme")
-theme_override_colors/font_color = Color(0.9, 0.38, 0.08, 1)
-theme_override_font_sizes/font_size = 32
-text = "Renkler  ·  Hayvanlar  ·  Meyveler"
-horizontal_alignment = 1
-vertical_alignment = 1
+theme_override_font_sizes/normal_font_size = 34
+theme_override_fonts/normal_font = ExtResource("3_sigmar")
+text = "[center][color=#FF2D55]Renkler[/color]  ·  [color=#00C853]Hayvanlar[/color]  ·  [color=#FF9100]Meyveler[/color][/center]"
+fit_content = true
 
 [node name="StartButton" type="Button" parent="." unique_id=1691066427]
 anchors_preset = 13
