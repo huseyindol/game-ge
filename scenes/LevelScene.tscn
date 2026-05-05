@@ -116,9 +116,13 @@ color_ramp = SubResource("Gradient_confetti_alpha")
 
 [node name="BubbleText" type="Label" parent="FXLayer"]
 anchor_left = 0.0
+anchor_top = 0.5
 anchor_right = 1.0
-offset_top = 500.0
-offset_bottom = 680.0
+anchor_bottom = 0.5
+offset_left = 0.0
+offset_top = -90.0
+offset_right = 0.0
+offset_bottom = 90.0
 theme = ExtResource("3_theme")
 theme_override_fonts/font = ExtResource("4_sigmar")
 theme_override_font_sizes/font_size = 100

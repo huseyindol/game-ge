@@ -59,11 +59,12 @@ func _sync_viewport_nodes() -> void:
 	confetti.emission_rect_extents = Vector2(minf(sz.x * 0.45, 360.0), 36.0)
 
 	var band := clampf(sz.y * 0.2, 120.0, 220.0)
-	var mid := sz.y * 0.5
+	# BubbleText: anchor_top/bottom = 0.5 → dikey orta bant (offset_top/bottom merkeze göre).
+	# anchor_left/right = 0..1 → tam genişlik için offset_left/right = 0 (offset_right = genişlik EKLEME).
 	bubble_text.offset_left = 0.0
-	bubble_text.offset_right = sz.x
-	bubble_text.offset_top = mid - band * 0.5
-	bubble_text.offset_bottom = mid + band * 0.5
+	bubble_text.offset_right = 0.0
+	bubble_text.offset_top = -band * 0.5
+	bubble_text.offset_bottom = band * 0.5
 	bubble_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 
@@ -219,6 +220,8 @@ func _play_correct_fx() -> void:
 	bubble_text.visible = true
 	bubble_text.modulate.a = 0.0
 	bubble_text.scale = Vector2(0.5, 0.5)
+	await get_tree().process_frame
+	bubble_text.pivot_offset = bubble_text.size * 0.5
 	var vmax := 1.12 if minf(
 		get_viewport().get_visible_rect().size.x,
 		get_viewport().get_visible_rect().size.y,

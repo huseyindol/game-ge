@@ -17,18 +17,18 @@ extends Node
 signal level_started(level: Dictionary, choice_keys: Array)
 signal answer_evaluated(is_correct: bool, level: Dictionary, chosen_key: String)
 signal life_lost(remaining_lives: int)
-signal game_over          # 5 can bitti
-signal game_won           # 24. seviye tamamlandı
+signal game_over # 5 can bitti
+signal game_won # 24. seviye tamamlandı
 signal lives_changed(remaining_lives: int)
 
 
 const TAG := "LevelManager"
 const LEVEL_SCENE_PATH := "res://scenes/LevelScene.tscn"
-const WIN_SCENE_PATH   := "res://scenes/WinScene.tscn"
-const GAME_OVER_PATH   := "res://scenes/GameOverScene.tscn"
+const WIN_SCENE_PATH := "res://scenes/WinScene.tscn"
+const GAME_OVER_PATH := "res://scenes/GameOverScene.tscn"
 
 ## Yayın için 0 yapın. 0'dan büyükse bu kadar doğru cevap sonrası kazanma ekranına git (UI test).
-const WIN_AFTER_CORRECT_FOR_TEST: int = 3
+const WIN_AFTER_CORRECT_FOR_TEST: int = 0
 
 # =====================================================================
 #  STATE
