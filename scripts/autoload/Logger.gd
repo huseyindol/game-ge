@@ -1,3 +1,4 @@
+class_name Logger
 extends Node
 ## Logger — Merkezi loglama servisi (Autoload Singleton).
 ##
