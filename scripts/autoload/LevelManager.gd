@@ -39,7 +39,7 @@ var _life_lost_in_current_level: bool = false
 
 
 func _ready() -> void:
-	Logger.info(TAG, "LevelManager hazır.")
+	Log.info(TAG, "LevelManager hazır.")
 
 
 # =====================================================================
@@ -52,20 +52,20 @@ func start_new_game(reset_analytics: bool = false) -> void:
 	lives = GameData.MAX_LIVES
 	if reset_analytics:
 		AnalyticsManager.reset_all()
-	Logger.info(TAG, "Yeni oyun başladı. Can=%d" % lives)
+	Log.info(TAG, "Yeni oyun başladı. Can=%d" % lives)
 	get_tree().change_scene_to_file(LEVEL_SCENE_PATH)
 
 
 ## LevelScene._ready() içinden çağrılır. Mevcut seviyeyi kurar ve sinyal yayınlar.
 func enter_current_level() -> void:
 	if current_level_id < 1 or current_level_id > GameData.TOTAL_LEVELS:
-		Logger.error(TAG, "Geçersiz seviye id=%d" % current_level_id)
+		Log.error(TAG, "Geçersiz seviye id=%d" % current_level_id)
 		return
 	_current_level = GameData.LEVELS[current_level_id - 1].duplicate(true)
 	_current_choices = GameData.build_choice_keys(_current_level)
 	_life_lost_in_current_level = false
 
-	Logger.info(TAG, "Seviye %d hazırlanıyor (type=%s, target=%s, choices=%d)" % [
+	Log.info(TAG, "Seviye %d hazırlanıyor (type=%s, target=%s, choices=%d)" % [
 		_current_level.id, _current_level.type,
 		_current_level.target, _current_choices.size(),
 	])
@@ -80,7 +80,7 @@ func enter_current_level() -> void:
 ## Seçim yapıldığında UI tarafından çağrılır.
 func submit_answer(chosen_key: String) -> void:
 	if _current_level.is_empty():
-		Logger.warn(TAG, "submit_answer: aktif seviye yok.")
+		Log.warn(TAG, "submit_answer: aktif seviye yok.")
 		return
 
 	var is_correct: bool = (chosen_key == _current_level.target)
@@ -90,7 +90,7 @@ func submit_answer(chosen_key: String) -> void:
 
 	if is_correct:
 		AudioManager.play_sfx("correct")
-		Logger.info(TAG, "Doğru! Seviye %d tamamlandı." % _current_level.id)
+		Log.info(TAG, "Doğru! Seviye %d tamamlandı." % _current_level.id)
 		_advance_after_delay()
 	else:
 		AudioManager.play_sfx("wrong")
@@ -104,19 +104,19 @@ func submit_answer(chosen_key: String) -> void:
 func _handle_wrong_answer() -> void:
 	# Aynı seviyede birden fazla yanlış olsa bile sadece 1 can düşer.
 	if _life_lost_in_current_level:
-		Logger.debug(TAG, "Aynı seviyede ek yanlış — can düşmez.")
+		Log.debug(TAG, "Aynı seviyede ek yanlış — can düşmez.")
 		return
 	_life_lost_in_current_level = true
 	lives -= 1
 	lives_changed.emit(lives)
 	life_lost.emit(lives)
-	Logger.info(TAG, "Can düştü: %d kaldı." % lives)
+	Log.info(TAG, "Can düştü: %d kaldı." % lives)
 	if lives <= 0:
 		_trigger_game_over()
 
 
 func _trigger_game_over() -> void:
-	Logger.info(TAG, "Oyun bitti — canlar tükendi.")
+	Log.info(TAG, "Oyun bitti — canlar tükendi.")
 	game_over.emit()
 	# Sahne değişimi için 1 saniye bekle (UI animasyonu görünsün).
 	await get_tree().create_timer(1.0).timeout
@@ -132,7 +132,7 @@ func _advance_after_delay() -> void:
 	await get_tree().create_timer(1.6).timeout
 
 	if current_level_id >= GameData.TOTAL_LEVELS:
-		Logger.info(TAG, "Tüm seviyeler tamamlandı 🎉")
+		Log.info(TAG, "Tüm seviyeler tamamlandı 🎉")
 		game_won.emit()
 		get_tree().change_scene_to_file(WIN_SCENE_PATH)
 		return

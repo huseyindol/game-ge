@@ -42,7 +42,7 @@ var _session_start_ms: int = 0
 func _ready() -> void:
 	_session_start_ms = Time.get_ticks_msec()
 	_load_from_disk()
-	Logger.info(TAG, "Analytics hazır. Toplam D/Y: %d/%d" % [total_correct, total_wrong])
+	Log.info(TAG, "Analytics hazır. Toplam D/Y: %d/%d" % [total_correct, total_wrong])
 
 
 # =====================================================================
@@ -52,18 +52,18 @@ func _ready() -> void:
 ## Yeni bir seviye açıldığında çağrılır. Sessiz kronometre başlar.
 func start_level_timer(level_id: int) -> void:
 	if level_id <= 0:
-		Logger.warn(TAG, "start_level_timer: geçersiz level_id=%d" % level_id)
+		Log.warn(TAG, "start_level_timer: geçersiz level_id=%d" % level_id)
 		return
 	_active_level_id = level_id
 	_level_start_ms = Time.get_ticks_msec()
 	_ensure_level_record(level_id)
-	Logger.debug(TAG, "Kronometre başladı (level=%d)" % level_id)
+	Log.debug(TAG, "Kronometre başladı (level=%d)" % level_id)
 
 
 ## Çocuk bir seçim yaptığında çağrılır.
 func record_response(level_id: int, is_correct: bool) -> void:
 	if level_id != _active_level_id:
-		Logger.warn(TAG, "record_response: aktif seviye %d, gelen %d" % [_active_level_id, level_id])
+		Log.warn(TAG, "record_response: aktif seviye %d, gelen %d" % [_active_level_id, level_id])
 	var elapsed_ms: int = Time.get_ticks_msec() - _level_start_ms
 	if elapsed_ms < 0:
 		elapsed_ms = 0  # defansif: sistem saati değişmiş olabilir.
@@ -85,7 +85,7 @@ func record_response(level_id: int, is_correct: bool) -> void:
 		current_correct_streak = 0
 		longest_wrong_streak = maxi(longest_wrong_streak, current_wrong_streak)
 
-	Logger.info(TAG, "Cevap kaydedildi: level=%d correct=%s ms=%d streak(D/Y)=%d/%d" % [
+	Log.info(TAG, "Cevap kaydedildi: level=%d correct=%s ms=%d streak(D/Y)=%d/%d" % [
 		level_id, str(is_correct), elapsed_ms,
 		current_correct_streak, current_wrong_streak,
 	])
@@ -154,7 +154,7 @@ func reset_all() -> void:
 	_level_start_ms = 0
 	_active_level_id = -1
 	_session_start_ms = Time.get_ticks_msec()
-	Logger.info(TAG, "Tüm istatistikler sıfırlandı.")
+	Log.info(TAG, "Tüm istatistikler sıfırlandı.")
 	stats_updated.emit()
 	_save_to_disk()
 
@@ -175,7 +175,7 @@ func _save_to_disk() -> void:
 	}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f == null:
-		Logger.error(TAG, "Kaydetme başarısız (%s) hata=%d" % [SAVE_PATH, FileAccess.get_open_error()])
+		Log.error(TAG, "Kaydetme başarısız (%s) hata=%d" % [SAVE_PATH, FileAccess.get_open_error()])
 		return
 	f.store_string(JSON.stringify(payload, "  "))
 	f.close()
@@ -183,18 +183,18 @@ func _save_to_disk() -> void:
 
 func _load_from_disk() -> void:
 	if not FileAccess.file_exists(SAVE_PATH):
-		Logger.info(TAG, "Kayıt yok, sıfırdan başlıyor.")
+		Log.info(TAG, "Kayıt yok, sıfırdan başlıyor.")
 		return
 	var f := FileAccess.open(SAVE_PATH, FileAccess.READ)
 	if f == null:
-		Logger.error(TAG, "Yükleme başarısız (%s)" % SAVE_PATH)
+		Log.error(TAG, "Yükleme başarısız (%s)" % SAVE_PATH)
 		return
 	var raw := f.get_as_text()
 	f.close()
 
 	var parsed = JSON.parse_string(raw)
 	if typeof(parsed) != TYPE_DICTIONARY:
-		Logger.warn(TAG, "Kayıt dosyası bozuk, sıfırlanıyor.")
+		Log.warn(TAG, "Kayıt dosyası bozuk, sıfırlanıyor.")
 		return
 
 	total_correct          = int(parsed.get("total_correct", 0))

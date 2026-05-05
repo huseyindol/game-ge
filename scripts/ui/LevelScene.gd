@@ -71,7 +71,7 @@ func _build_choice_for(level: Dictionary, key: String) -> Choice:
 func _safe_load_texture(path: String) -> Texture2D:
 	if ResourceLoader.exists(path):
 		return load(path)
-	Logger.warn("LevelScene", "Görsel bulunamadı, placeholder kullanılıyor: %s" % path)
+	Log.warn("LevelScene", "Görsel bulunamadı, placeholder kullanılıyor: %s" % path)
 	return null
 
 

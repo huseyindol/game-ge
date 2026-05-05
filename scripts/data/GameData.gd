@@ -91,7 +91,7 @@ func _ready() -> void:
 		var lv: Dictionary = LEVELS[i]
 		assert(lv.id == i + 1, "GameData: Seviye id %d olmalı" % (i + 1))
 		assert(_is_valid_target(lv), "GameData: Geçersiz target '%s' (seviye %d)" % [lv.target, lv.id])
-	Logger.info("GameData", "24 seviye doğrulandı.")
+	Log.info("GameData", "24 seviye doğrulandı.")
 
 
 func _is_valid_target(lv: Dictionary) -> bool:
@@ -117,7 +117,7 @@ func build_choice_keys(level: Dictionary) -> Array[String]:
 		"fruit":
 			pool = FRUITS
 		_:
-			Logger.error("GameData", "Bilinmeyen seviye tipi: %s" % level.type)
+			Log.error("GameData", "Bilinmeyen seviye tipi: %s" % level.type)
 			return []
 
 	var keys: Array[String] = []

@@ -1,14 +1,16 @@
-class_name Logger
 extends Node
-## Logger — Merkezi loglama servisi (Autoload Singleton).
+## Log — Merkezi loglama servisi (Autoload Singleton, adı: "Log").
 ##
 ## Karpathy prensipleri:
 ##   - Tek sorumluluk: yalnızca log basar.
 ##   - Seviye bazlı filtreleme (DEBUG/INFO/WARN/ERROR).
 ##   - Konsol + opsiyonel dosya çıktısı (user://game.log).
 ##
+## Not: class_name kullanılmaz — Godot 4.6 native "Log" sınıfıyla çakışır.
+##      Autoload adı "Log" olarak kayıtlıdır (project.godot).
+##
 ## Kullanım:
-##   Logger.info("LevelManager", "Seviye %d başladı" % id)
+##   Log.info("LevelManager", "Seviye %d başladı" % id)
 
 enum LogLevel { DEBUG, INFO, WARN, ERROR }
 
@@ -25,8 +27,8 @@ func _ready() -> void:
 	if write_to_file:
 		_file = FileAccess.open(LOG_FILE_PATH, FileAccess.WRITE)
 		if _file == null:
-			push_warning("Logger: log dosyası açılamadı (%s)" % LOG_FILE_PATH)
-	info("Logger", "Logger başlatıldı (min_level=%s)" % LEVEL_NAMES[min_level])
+			push_warning("Log: log dosyası açılamadı (%s)" % LOG_FILE_PATH)
+	info("Log", "Log başlatıldı (min_level=%s)" % LEVEL_NAMES[min_level])
 
 
 func debug(tag: String, msg: String) -> void:

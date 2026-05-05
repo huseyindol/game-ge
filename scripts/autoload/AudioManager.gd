@@ -25,14 +25,14 @@ func _ready() -> void:
 	_word_player.bus = "Master"
 	add_child(_word_player)
 
-	Logger.info(TAG, "AudioManager hazır.")
+	Log.info(TAG, "AudioManager hazır.")
 
 
 ## Sabit SFX adı ile çal.
 func play_sfx(name: String) -> void:
 	var path: String = SFX.get(name, "")
 	if path.is_empty():
-		Logger.warn(TAG, "Bilinmeyen SFX: %s" % name)
+		Log.warn(TAG, "Bilinmeyen SFX: %s" % name)
 		return
 	_play_path(_player, path)
 
@@ -46,11 +46,11 @@ func play_word(path: String) -> void:
 
 func _play_path(player: AudioStreamPlayer, path: String) -> void:
 	if not ResourceLoader.exists(path):
-		Logger.warn(TAG, "Ses dosyası bulunamadı: %s" % path)
+		Log.warn(TAG, "Ses dosyası bulunamadı: %s" % path)
 		return
 	var stream: AudioStream = load(path)
 	if stream == null:
-		Logger.warn(TAG, "Ses yüklenemedi: %s" % path)
+		Log.warn(TAG, "Ses yüklenemedi: %s" % path)
 		return
 	player.stream = stream
 	player.play()
