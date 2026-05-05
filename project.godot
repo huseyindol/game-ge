@@ -1,0 +1,40 @@
+; Engine configuration file.
+; Godot 4.x — Eğitici Eşleştirme Oyunu (4 yaş, 24 seviye)
+
+config_version=5
+
+[application]
+
+config/name="Eğitici Eşleştirme Oyunu"
+config/description="Okul öncesi (4 yaş) çocuklar için renk, hayvan ve meyve eşleştirme oyunu."
+run/main_scene="res://scenes/Main.tscn"
+config/features=PackedStringArray("4.2", "GL Compatibility")
+config/icon="res://icon.svg"
+
+[autoload]
+
+Logger="*res://scripts/autoload/Logger.gd"
+GameData="*res://scripts/data/GameData.gd"
+AnalyticsManager="*res://scripts/autoload/AnalyticsManager.gd"
+AudioManager="*res://scripts/autoload/AudioManager.gd"
+LevelManager="*res://scripts/autoload/LevelManager.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[input]
+
+ui_select={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":32,"physical_keycode":0,"key_label":0,"unicode":0,"echo":false,"script":null)]
+}
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/clear_color=Color(0.95, 0.97, 1, 1)
