@@ -6,8 +6,13 @@
 #   NEXTJS_PUBLIC_GAME_PATH   — public içi alt yol; örn. assets/games/game-ge
 #
 # Not: REPO ve public path için Secrets kullanıyoruz (workflow secrets.*).
-# İsteğe bağlı: Next checkout dalı — aşağıdaki `ref` satırını açıp sabit veya vars ile ver.
-# (Şu an ref yok: actions/checkout hedef reponun varsayılan dalını kullanır, genelde main.)
+#
+# Üretilen sürüm dosyası: next-site içinde src/lib/game-ge-asset-version.generated.ts
+# Next iframe örn.: `.../index.html?v=${GAME_GE_ASSET_CACHE_KEY}`
+# (Yolu değiştirmek istersen workflow’da OUT ve git add yolunu güncelle.)
+#
+# İsteğe bağlı: Next checkout dalı — checkout adımına `ref: main` vb. eklenebilir.
+# (ref yok: actions/checkout hedef reponun varsayılan dalını kullanır.)
 #
 # Secrets eksikse deploy job’da checkout/push adımı hata verir; build yine de artifact üretir.
 
@@ -96,6 +101,17 @@ jobs:
           echo "Kopyalanan dosyalar:"
           ls -la "${TARGET}"
 
+      - name: Sürüm dosyası (dinamik — Next iframe v=${GAME_GE_ASSET_CACHE_KEY})
+        run: |
+          set -euo pipefail
+          OUT="next-site/src/lib/game-ge-asset-version.generated.ts"
+          mkdir -p "$(dirname "${OUT}")"
+          {
+            echo '/** game-ge — GitHub Actions; elle düzenlemeyin. */'
+            echo "export const GAME_GE_ASSET_CACHE_KEY = \"${{ github.run_id }}\";"
+            echo "export const GAME_GE_ASSET_SHA = \"${{ github.sha }}\";"
+          } > "${OUT}"
+
       - name: Commit ve push
         working-directory: next-site
         env:
@@ -104,7 +120,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add "public/${PUBLIC_SUBPATH}"
+          git add "public/${PUBLIC_SUBPATH}" "src/lib/game-ge-asset-version.generated.ts"
           if git diff --cached --quiet; then
             echo "Commit edilecek değişiklik yok"
             exit 0
