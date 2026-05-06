@@ -1,5 +1,5 @@
 extends Node2D
-## LevelScene — 24 seviyenin tümünü çalıştıran tek sahne.
+## LevelScene — Tüm seviyeleri çalıştıran tek sahne.
 ##
 ## Dikey/yatay: Üstte kalpler + ses + tam genişlikte ortalanmış hedef yazısı;
 ## altta seçenekler ortada. 4/6 seçenek için sütun sayısı ekran genişliğine göre ayarlanır.

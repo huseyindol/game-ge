@@ -1,5 +1,5 @@
 extends Node
-## GameData — 24 seviyenin statik konfigürasyonu (Autoload).
+## GameData — 23 seviyenin statik konfigürasyonu (Autoload).
 ##
 ## Data-driven tasarım: Yeni seviye eklemek = sadece bu listeye satır eklemek.
 ## Hiçbir yerde "if level == 5" tarzı sert kodlama YOK.
@@ -9,9 +9,9 @@ extends Node
 ##   "color_text"    — renk adı yazıları         (4-7)
 ##   "color_mixed"   — daire + yazı karma 6 adet (8-9)
 ##   "animal"        — hayvan görseli            (10-15)
-##   "fruit"         — meyve görseli             (16-24)
+##   "fruit"         — meyve görseli             (16-23, 8 adet)
 
-const TOTAL_LEVELS := 24
+const TOTAL_LEVELS := 23
 const MAX_LIVES := 5
 
 # Renk paleti (4 yaşa hitap eden parlak/yumuşak tonlar).
@@ -48,7 +48,7 @@ const FRUITS := {
 	"cherry": {"tr": "KİRAZ", "emoji": "🍒", "img": "res://assets/images/fruits/cherry.jpeg", "sfx": "res://assets/sfx/cherry.ogg"},
 }
 
-# 24 seviyenin tanımı. (level_id, type, target_key, distractor_keys, num_choices)
+# 23 seviyenin tanımı. target alanı yalnız doğrulama; oyunda oturum başına atanır.
 # distractor_keys boş bırakılırsa LevelManager rastgele seçer.
 const LEVELS: Array[Dictionary] = [
 	# 1-3: Renkler — Şekil
@@ -70,7 +70,7 @@ const LEVELS: Array[Dictionary] = [
 	{"id": 13, "type": "animal", "target": "sheep", "choices": 4},
 	{"id": 14, "type": "animal", "target": "horse", "choices": 4},
 	{"id": 15, "type": "animal", "target": "rabbit", "choices": 4},
-	# 16-24: Meyveler
+	# 16-23: Meyveler (8 adet — havuzdaki her meyve bir kez)
 	{"id": 16, "type": "fruit", "target": "apple", "choices": 4},
 	{"id": 17, "type": "fruit", "target": "banana", "choices": 4},
 	{"id": 18, "type": "fruit", "target": "strawberry", "choices": 4},
@@ -79,8 +79,121 @@ const LEVELS: Array[Dictionary] = [
 	{"id": 21, "type": "fruit", "target": "watermelon", "choices": 4},
 	{"id": 22, "type": "fruit", "target": "pear", "choices": 4},
 	{"id": 23, "type": "fruit", "target": "cherry", "choices": 4},
-	{"id": 24, "type": "fruit", "target": "apple", "choices": 4},
 ]
+
+
+## Oturum sırası: renk (9) + hayvan (6) + meyve (8); blok içi sıra rastgele.
+## Aynı oturumda aynı soru (type + target tekrar etmez); alt tipler ayrı (ör. color_circle:MAVİ ≠ color_text:MAVİ).
+## `id` 1..TOTAL_LEVELS oturum sırasına göre atanır.
+func build_shuffled_run_levels() -> Array[Dictionary]:
+	var color_levels: Array[Dictionary] = []
+	var animal_levels: Array[Dictionary] = []
+	var fruit_levels: Array[Dictionary] = []
+	for lv in LEVELS:
+		var d: Dictionary = lv.duplicate(true)
+		match String(d.type):
+			"color_circle", "color_text", "color_mixed":
+				color_levels.append(d)
+			"animal":
+				animal_levels.append(d)
+			"fruit":
+				fruit_levels.append(d)
+			_:
+				Log.error("GameData", "Bilinmeyen seviye tipi (karıştırma): %s" % d.type)
+	color_levels.shuffle()
+	animal_levels.shuffle()
+	fruit_levels.shuffle()
+	var out: Array[Dictionary] = []
+	out.append_array(color_levels)
+	out.append_array(animal_levels)
+	out.append_array(fruit_levels)
+	var n_col := color_levels.size()
+	var n_ani := animal_levels.size()
+	_assign_color_segment_no_adjacent_same_target(out.slice(0, n_col))
+	_assign_unique_targets_in_segment(out.slice(n_col, n_col + n_ani))
+	_assign_unique_targets_in_segment(out.slice(n_col + n_ani, out.size()))
+	for i in out.size():
+		out[i].id = i + 1
+	return out
+
+
+## Renk bloklarında üst üste aynı renk (hedef) gelmesin; tip başına tekrarsız.
+func _assign_color_segment_no_adjacent_same_target(levels: Array) -> void:
+	if levels.is_empty():
+		return
+	var used_circle: Dictionary = {}
+	var used_text: Dictionary = {}
+	var used_mixed: Dictionary = {}
+	var last := ""
+	for item in levels:
+		if not item is Dictionary:
+			continue
+		var d: Dictionary = item
+		var t := String(d.type)
+		var used: Dictionary
+		match t:
+			"color_circle":
+				used = used_circle
+			"color_text":
+				used = used_text
+			"color_mixed":
+				used = used_mixed
+			_:
+				Log.error("GameData", "Renk segmentinde beklenmeyen tip: %s" % t)
+				return
+		var all_k: Array = COLORS.keys()
+		var cand: Array = all_k.filter(func(k): return not used.has(k) and String(k) != last)
+		if cand.is_empty():
+			cand = all_k.filter(func(k): return not used.has(k))
+		if cand.is_empty():
+			Log.error("GameData", "Renk hedefi atanamıyor (tip=%s)." % t)
+			return
+		cand.shuffle()
+		var pick := String(cand[0])
+		d.target = pick
+		used[pick] = true
+		last = pick
+
+
+func _assign_unique_targets_in_segment(levels: Array) -> void:
+	if levels.is_empty():
+		return
+	var by_type: Dictionary = {}
+	for item in levels:
+		if not item is Dictionary:
+			continue
+		var d: Dictionary = item
+		var t := String(d.type)
+		if not by_type.has(t):
+			by_type[t] = []
+		by_type[t].append(d)
+	for t in by_type:
+		_assign_unique_from_pool(by_type[t], _pool_for_level_type(t))
+
+
+func _pool_for_level_type(t: String) -> Dictionary:
+	match t:
+		"color_circle", "color_text", "color_mixed":
+			return COLORS
+		"animal":
+			return ANIMALS
+		"fruit":
+			return FRUITS
+	return {}
+
+
+## Havuzdan karışık, tekrarsız hedef ata (sayı > havuz ise hata).
+func _assign_unique_from_pool(levels: Array, pool: Dictionary) -> void:
+	var n: int = levels.size()
+	var keys: Array = pool.keys()
+	if keys.size() < n:
+		Log.error("GameData", "Tekrarsız soru için havuz yetersiz: %d soru, %d aday." % [n, keys.size()])
+		return
+	keys.shuffle()
+	for i in n:
+		var lv_item: Variant = levels[i]
+		if lv_item is Dictionary:
+			(lv_item as Dictionary).target = String(keys[i])
 
 
 func _ready() -> void:
@@ -91,7 +204,7 @@ func _ready() -> void:
 		var lv: Dictionary = LEVELS[i]
 		assert(lv.id == i + 1, "GameData: Seviye id %d olmalı" % (i + 1))
 		assert(_is_valid_target(lv), "GameData: Geçersiz target '%s' (seviye %d)" % [lv.target, lv.id])
-	Log.info("GameData", "24 seviye doğrulandı.")
+	Log.info("GameData", "%d seviye doğrulandı." % TOTAL_LEVELS)
 
 
 func _is_valid_target(lv: Dictionary) -> bool:
@@ -143,6 +256,21 @@ func get_display_name(level: Dictionary) -> String:
 		"fruit":
 			return FRUITS[level.target].tr
 	return "?"
+
+
+## Tıklanan seçeneğin Türkçe adı (yanlış cevap sesli geri bildirimi).
+func get_choice_tr(level: Dictionary, key: String) -> String:
+	match level.type:
+		"color_circle", "color_text", "color_mixed":
+			if COLORS.has(key):
+				return COLORS[key].tr
+		"animal":
+			if ANIMALS.has(key):
+				return ANIMALS[key].tr
+		"fruit":
+			if FRUITS.has(key):
+				return FRUITS[key].tr
+	return ""
 
 
 ## Prompt label'ın rengi (renkli seviyelerde target rengi, diğerlerinde siyah).

@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://b1ppanel000000"]
+[gd_scene load_steps=7 format=3 uid="uid://b1ppanel000000"]
 
 [ext_resource type="Script" path="res://scripts/ui/ParentPanel.gd" id="1_pp"]
 [ext_resource type="Theme" uid="uid://d0sr855g4svyy" path="res://themes/GameTheme.tres" id="2_theme"]
 [ext_resource type="Script" path="res://scripts/ui/ParentPopupChrome.gd" id="3_chrome"]
+[ext_resource type="Texture2D" path="res://assets/ui/icon_check.svg" id="4_chk"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_shell"]
 content_margin_left = 22
@@ -131,7 +132,10 @@ alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 26
+theme_override_constants/icon_max_width = 30
 theme_override_styles/normal = SubResource("StyleBox_close_go")
 theme_override_styles/pressed = SubResource("StyleBox_close_go")
 theme_override_styles/hover = SubResource("StyleBox_close_hover")
-text = "✓  Kapat"
+text = "Kapat"
+icon = ExtResource("4_chk")
+expand_icon = true

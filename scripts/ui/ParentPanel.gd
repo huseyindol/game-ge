@@ -6,13 +6,15 @@ class_name ParentPanel
 ## proxy'si üzerinden alır (UI hiçbir zaman AnalyticsManager ile doğrudan konuşmaz)
 ## — pedagojik metni ise AnalyticsManager.get_pedagogical_feedback()'ten okur.
 
-const CLR_TITLE := Color(0.36, 0.11, 0.58, 1)
-const CLR_LABEL := Color(0.29, 0.34, 0.42, 1)
-const CLR_VALUE := Color(0.43, 0.2, 0.78, 1)
-const CLR_FEEDBACK_TITLE := Color(0.07, 0.54, 0.70, 1)
-const CLR_FEEDBACK_TEXT := Color(0.20, 0.22, 0.34, 1)
+const CLR_TITLE := Color(0.26, 0.08, 0.45, 1)
+const CLR_LABEL := Color(0.11, 0.13, 0.18, 1)
+const CLR_VALUE := Color(0.34, 0.12, 0.62, 1)
+const CLR_FEEDBACK_TITLE := Color(0.02, 0.42, 0.56, 1)
+const CLR_FEEDBACK_TEXT := Color(0.06, 0.08, 0.12, 1)
 
 const TAG := "ParentPanel"
+## Statik font: web’de variable eksen / hinting sorunları yok; ekran okuması için uygun.
+const FONT_READABLE := preload("res://fonts/Fredoka-Regular.ttf")
 
 @onready var content: VBoxContainer = $Center/CardWrap/Stack/Shell/VBox/Content
 @onready var close_button: Button = $Center/CardWrap/Stack/Shell/VBox/FooterBar/CloseButton
@@ -24,6 +26,7 @@ func _ready() -> void:
 	visible = false
 	visibility_changed.connect(_on_visibility_changed)
 	close_button.pressed.connect(hide)
+	close_button.add_theme_font_override("font", FONT_READABLE)
 	backdrop.gui_input.connect(_on_backdrop_gui)
 	# Sayımlar değişirse panel açıkken canlı güncellensin.
 	AnalyticsManager.stats_updated.connect(_on_stats_updated)
@@ -86,6 +89,7 @@ func _render() -> void:
 func _add_title(t: String) -> void:
 	var l := Label.new()
 	l.text = t
+	l.add_theme_font_override("font", FONT_READABLE)
 	l.add_theme_font_size_override("font_size", 34)
 	l.add_theme_color_override("font_color", CLR_TITLE)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -103,6 +107,7 @@ func _add_title(t: String) -> void:
 func _add_subtitle(t: String) -> void:
 	var l := Label.new()
 	l.text = t
+	l.add_theme_font_override("font", FONT_READABLE)
 	l.add_theme_font_size_override("font_size", 24)
 	l.add_theme_color_override("font_color", CLR_FEEDBACK_TITLE)
 	content.add_child(l)
@@ -127,13 +132,15 @@ func _add_row(label: String, value: String) -> void:
 	row.add_theme_constant_override("separation", 16)
 	var lbl := Label.new()
 	lbl.text = label
-	lbl.add_theme_font_size_override("font_size", 23)
+	lbl.add_theme_font_override("font", FONT_READABLE)
+	lbl.add_theme_font_size_override("font_size", 24)
 	lbl.add_theme_color_override("font_color", CLR_LABEL)
 	lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(lbl)
 	var val := Label.new()
 	val.text = value
-	val.add_theme_font_size_override("font_size", 23)
+	val.add_theme_font_override("font", FONT_READABLE)
+	val.add_theme_font_size_override("font_size", 24)
 	val.add_theme_color_override("font_color", CLR_VALUE)
 	val.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	row.add_child(val)
@@ -149,7 +156,9 @@ func _add_feedback(text: String) -> void:
 	rt.scroll_active = false
 	rt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	rt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	rt.add_theme_font_size_override("normal_font_size", 18)
+	rt.add_theme_font_override("normal_font", FONT_READABLE)
+	rt.add_theme_font_size_override("normal_font_size", 25)
+	rt.add_theme_constant_override("line_separation", 8)
 	rt.add_theme_color_override("default_color", CLR_FEEDBACK_TEXT)
 	rt.text = text
 	content.add_child(rt)

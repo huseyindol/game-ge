@@ -18,7 +18,7 @@ signal level_started(level: Dictionary, choice_keys: Array)
 signal answer_evaluated(is_correct: bool, level: Dictionary, chosen_key: String)
 signal life_lost(remaining_lives: int)
 signal game_over # 5 can bitti
-signal game_won # 24. seviye tamamlandı
+signal game_won # Son seviye tamamlandı
 signal lives_changed(remaining_lives: int)
 
 
@@ -35,6 +35,8 @@ const WIN_AFTER_CORRECT_FOR_TEST: int = 0
 # =====================================================================
 var current_level_id: int = 1
 var lives: int = GameData.MAX_LIVES
+## Bu oturumun seviye sırası (GameData.build_shuffled_run_levels).
+var _run_levels: Array[Dictionary] = []
 var _current_level: Dictionary = {}
 var _current_choices: Array[String] = []
 # Aynı seviyede birden çok yanlışta sadece 1 can düşsün diye:
@@ -55,6 +57,7 @@ func start_new_game(reset_analytics: bool = false) -> void:
 	current_level_id = 1
 	lives = GameData.MAX_LIVES
 	_correct_answers_this_run = 0
+	_run_levels = GameData.build_shuffled_run_levels()
 	if reset_analytics:
 		AnalyticsManager.reset_all()
 	Log.info(TAG, "Yeni oyun başladı. Can=%d" % lives)
@@ -66,7 +69,10 @@ func enter_current_level() -> void:
 	if current_level_id < 1 or current_level_id > GameData.TOTAL_LEVELS:
 		Log.error(TAG, "Geçersiz seviye id=%d" % current_level_id)
 		return
-	_current_level = GameData.LEVELS[current_level_id - 1].duplicate(true)
+	if _run_levels.is_empty():
+		_run_levels = GameData.build_shuffled_run_levels()
+		Log.warn(TAG, "Çalışma seviye listesi boştu — karıştırılmış liste oluşturuldu.")
+	_current_level = _run_levels[current_level_id - 1].duplicate(true)
 	_current_choices = GameData.build_choice_keys(_current_level)
 	_life_lost_in_current_level = false
 
@@ -99,7 +105,8 @@ func submit_answer(chosen_key: String) -> void:
 		Log.info(TAG, "Doğru! Seviye %d tamamlandı." % _current_level.id)
 		_advance_after_delay()
 	else:
-		AudioManager.play_sfx("wrong")
+		var wrong_label: String = GameData.get_choice_tr(_current_level, chosen_key)
+		AudioManager.play_wrong_then_speak(wrong_label)
 		_handle_wrong_answer()
 
 

@@ -54,6 +54,21 @@ func play_sfx(name: String) -> void:
 	_play_path(_player, path)
 
 
+## Yanlış SFX sonrası kısa gecikmeyle kelimeyi okur (üst üste binmez).
+func play_wrong_then_speak(label_tr: String) -> void:
+	play_sfx("wrong")
+	if label_tr.is_empty():
+		return
+	var tree: SceneTree = get_tree()
+	if tree == null:
+		speak_word(label_tr)
+		return
+	var t := tree.create_timer(0.55)
+	t.timeout.connect(func () -> void:
+		speak_word(label_tr)
+	, CONNECT_ONE_SHOT)
+
+
 ## Ses dosyası varsa çal, yoksa TTS ile seslendir.
 func play_or_speak(sfx_path: String, fallback_text: String) -> void:
 	if not sfx_path.is_empty() and ResourceLoader.exists(sfx_path):
