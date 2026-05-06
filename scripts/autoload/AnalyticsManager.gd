@@ -142,6 +142,116 @@ func get_summary() -> Dictionary:
 	}
 
 
+# =====================================================================
+#  PEDAGOJİK GERİ BİLDİRİM (4 yaş gelişim standartları)
+# =====================================================================
+#
+# AnalyticsManager veri toplar; BU bölüm verileri yorumlar.
+# Mesajlar `const` olarak tutulur (kuralları kodda değil veride tutmak için).
+# Eşikler tek noktada — magic number yok.
+
+# --- Eşikler (4 yaş normatif aralıklar) ---
+const FB_MIN_ATTEMPTS: int        = 4    # Bu cevap sayısının altında yargı yok.
+const FB_HIGH_ACCURACY: float     = 85.0
+const FB_GOOD_ACCURACY: float     = 80.0
+const FB_LOW_ACCURACY: float      = 60.0
+const FB_FAST_RT_SEC: float       = 3.0
+const FB_IMPULSIVE_RT_SEC: float  = 1.5
+const FB_SLOW_RT_SEC: float       = 3.5
+const FB_HIGH_STREAK: int         = 15
+
+# --- Mesaj sabitleri (i18n/A-B test için tek noktada toplandı) ---
+const FB_IDEAL := \
+	"Harika bir işitsel-görsel koordinasyon! Çocuğunuz duyduğu bilgiyi " + \
+	"(Seçimsel Tepki Süresi) çok hızlı işliyor ve yüksek odaklanma " + \
+	"becerisiyle doğru sonuca ulaşıyor."
+
+const FB_IMPULSIVE := \
+	"Çocuğunuz çok hızlı reflekslere sahip ancak karar verirken biraz " + \
+	"aceleci davranıyor. Doğruluk oranını artırmak için, oyunu oynarken " + \
+	"ona 'Önce resimlerin hepsine bir bakalım, sence hangisi?' diyerek " + \
+	"yavaşlamasına ve dürtü kontrolü sağlamasına yardımcı olabilirsiniz."
+
+const FB_METHODICAL := \
+	"Çocuğunuz oldukça dikkatli ve metodik düşünüyor! Hızlı ve rastgele " + \
+	"kararlar vermek yerine, seçenekleri iyice değerlendirip emin " + \
+	"olduktan sonra doğru cevaba ulaşıyor. Bu yaş için harika bir " + \
+	"analitik yaklaşım."
+
+const FB_HIGH_STREAK_MSG := \
+	"Mükemmel sürdürülebilir dikkat! Arka arkaya 15+ doğru cevap, " + \
+	"çocuğunuzun rastgele tahmin yapmak yerine görsel hafızasını " + \
+	"bilinçli olarak kullandığını gösteriyor."
+
+const FB_DEFAULT := \
+	"Çocuğunuz öğrenme yolculuğunda harika bir başlangıç yaptı. Onunla " + \
+	"birlikte oynamaya devam ederek hem dil gelişimini hem de görsel " + \
+	"hafızasını destekleyebilirsiniz. Her doğru cevap, sabırla pekişen " + \
+	"yeni bir bilişsel köprüdür."
+
+const FB_NOT_ENOUGH_DATA := \
+	"Henüz değerlendirme için yeterli veri yok. Çocuğunuzla birkaç seviye " + \
+	"daha oynadığınızda burada kişiselleştirilmiş bir gelişim özeti " + \
+	"görebileceksiniz."
+
+
+## Toplanan analitik verilere dayanarak 4 yaş çocuğu için bilimsel temelli,
+## yapıcı bir geri bildirim metni döndürür.
+##
+## Önceliklendirme:
+##   1. Veri yetersizse → uyarı metni
+##   2. Streak ≥ 15 → "Sürdürülebilir Dikkat" insight'ı eklenir (öncelikli)
+##   3. Bilişsel profil — IDEAL / IMPULSIVE / METHODICAL (sadece biri)
+##   4. Hiçbir keskin profil yoksa → motive edici varsayılan
+##
+## Çoklu insight'lar `\n\n` ile birleştirilir. Saf fonksiyon — yan etki yok.
+func get_pedagogical_feedback() -> String:
+	var total: int = total_correct + total_wrong
+
+	if total < FB_MIN_ATTEMPTS:
+		Logger.debug(TAG, "Feedback: yetersiz veri (%d cevap)" % total)
+		return FB_NOT_ENOUGH_DATA
+
+	var accuracy: float = get_accuracy_percent()
+	var avg_rt_sec: float = get_average_response_ms() / 1000.0
+
+	Logger.debug(TAG, "Feedback giriş: acc=%.1f%% rt=%.2fs streak=%d total=%d" % [
+		accuracy, avg_rt_sec, longest_correct_streak, total,
+	])
+
+	var insights: Array[String] = []
+
+	# ---- Durum 4: Sürdürülebilir dikkat (öncelikli) ----
+	if longest_correct_streak >= FB_HIGH_STREAK:
+		insights.append(FB_HIGH_STREAK_MSG)
+
+	# ---- Durum 1/2/3: Bilişsel profil — mutually exclusive ----
+	var profile := _classify_cognitive_profile(accuracy, avg_rt_sec)
+	if not profile.is_empty():
+		insights.append(profile)
+
+	# ---- Fallback: hiçbir keskin koşul tutmadıysa ----
+	if insights.is_empty():
+		insights.append(FB_DEFAULT)
+
+	return "\n\n".join(insights)
+
+
+## Bilişsel profil sınıflandırıcı — saf fonksiyon, test edilebilir.
+## Eşleşme yoksa boş string döner ve fallback devreye girer.
+func _classify_cognitive_profile(accuracy: float, avg_rt_sec: float) -> String:
+	# Durum 1: İdeal — yüksek doğruluk + hızlı tepki
+	if accuracy >= FB_HIGH_ACCURACY and avg_rt_sec <= FB_FAST_RT_SEC:
+		return FB_IDEAL
+	# Durum 2: Aceleci — düşük doğruluk + çok hızlı tepki
+	if accuracy <= FB_LOW_ACCURACY and avg_rt_sec <= FB_IMPULSIVE_RT_SEC:
+		return FB_IMPULSIVE
+	# Durum 3: Metodik — yüksek doğruluk + yavaş tepki
+	if accuracy >= FB_GOOD_ACCURACY and avg_rt_sec > FB_SLOW_RT_SEC:
+		return FB_METHODICAL
+	return ""
+
+
 ## Tüm sayımları sıfırla (örn. "Tekrar Dene" akışı için opsiyonel).
 func reset_all() -> void:
 	total_correct = 0
