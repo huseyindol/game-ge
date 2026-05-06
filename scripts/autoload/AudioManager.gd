@@ -68,6 +68,9 @@ func speak_word(text: String) -> void:
 
 
 func _speak_tts(text: String) -> void:
+	if OS.has_feature("web"):
+		_speak_tts_web(text)
+		return
 	if _tts_voice_id.is_empty():
 		Log.warn(TAG, "TTS sesi yok, atlanıyor: %s" % text)
 		return
@@ -75,6 +78,14 @@ func _speak_tts(text: String) -> void:
 		DisplayServer.tts_stop()
 	DisplayServer.tts_speak(text, _tts_voice_id, 90, 0.9, 1.0)
 	Log.debug(TAG, "TTS: %s" % text)
+
+
+## HTML5: DisplayServer TTS yok; tarayıcı SpeechSynthesis kullan.
+func _speak_tts_web(text: String) -> void:
+	var payload: String = JSON.stringify(text)
+	var js: String = "(function(){var t=%s;if('speechSynthesis'in window){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang='tr-TR';speechSynthesis.speak(u);}})();" % payload
+	JavaScriptBridge.eval(js)
+	Log.debug(TAG, "Web TTS: %s" % text)
 
 
 func _play_path(player: AudioStreamPlayer, path: String) -> void:

@@ -22,11 +22,12 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Log="*res://scripts/autoload/Logger.gd"
+Logger="*res://scripts/autoload/Logger.gd"
 GameData="*res://scripts/data/GameData.gd"
 AnalyticsManager="*res://scripts/autoload/AnalyticsManager.gd"
 AudioManager="*res://scripts/autoload/AudioManager.gd"
 LevelManager="*res://scripts/autoload/LevelManager.gd"
+Log="*res://scripts/autoload/Logger.gd"
 
 [display]
 
@@ -48,4 +49,5 @@ ui_select={
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
 environment/defaults/clear_color=Color(0.95, 0.97, 1, 1)

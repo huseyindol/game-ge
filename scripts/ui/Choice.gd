@@ -7,7 +7,10 @@ signal chose(key: String)
 enum Kind { CIRCLE, TEXT, IMAGE }
 
 const FONT_PATH := "res://fonts/Sigmar-Regular.ttf"
-const BTN_SIZE := 200.0
+## Hayvan/meyve kartları için yeterli alan + etiket bandı.
+const BTN_SIZE := 248.0
+const IMAGE_CAPTION_BAND := 50.0
+const IMAGE_INSET := 12.0
 
 var key: String = ""
 var kind: Kind = Kind.CIRCLE
@@ -144,22 +147,35 @@ func _build_image() -> void:
 		img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		img.anchor_left = 0.0; img.anchor_right = 1.0
 		img.anchor_top = 0.0;  img.anchor_bottom = 1.0
-		img.offset_bottom = -44
+		img.offset_left = IMAGE_INSET
+		img.offset_top = IMAGE_INSET
+		img.offset_right = -IMAGE_INSET
+		img.offset_bottom = -(IMAGE_CAPTION_BAND + IMAGE_INSET)
 		add_child(img)
 	elif not emoji.is_empty():
-		var emo := Label.new()
-		emo.text = emoji
-		emo.add_theme_font_size_override("font_size", 80)
-		emo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		emo.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		emo.anchor_left = 0.0; emo.anchor_right = 1.0
-		emo.anchor_top = 0.0;  emo.anchor_bottom = 1.0
-		emo.offset_bottom = -44
-		add_child(emo)
+		# Web / bazı fontlar emoji çizmiyor; metin+Türkçe font ile yedek.
+		var pict := Label.new()
+		if OS.has_feature("web"):
+			pict.text = label_text
+			var f := _load_font()
+			if f:
+				pict.add_theme_font_override("font", f)
+		else:
+			pict.text = emoji
+		pict.add_theme_font_size_override("font_size", 80)
+		pict.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		pict.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		pict.anchor_left = 0.0; pict.anchor_right = 1.0
+		pict.anchor_top = 0.0;  pict.anchor_bottom = 1.0
+		pict.offset_left = IMAGE_INSET
+		pict.offset_top = IMAGE_INSET
+		pict.offset_right = -IMAGE_INSET
+		pict.offset_bottom = -(IMAGE_CAPTION_BAND + IMAGE_INSET)
+		add_child(pict)
 
 	var caption := Label.new()
 	caption.text = label_text
-	caption.add_theme_font_size_override("font_size", 20)
+	caption.add_theme_font_size_override("font_size", 22)
 	caption.add_theme_color_override("font_color", Color(0.25, 0.1, 0.45, 1))
 	var font := _load_font()
 	if font:
@@ -168,7 +184,8 @@ func _build_image() -> void:
 	caption.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	caption.anchor_left = 0.0; caption.anchor_right = 1.0
 	caption.anchor_top = 1.0;  caption.anchor_bottom = 1.0
-	caption.offset_top = -42; caption.offset_bottom = -4
+	caption.offset_top = -IMAGE_CAPTION_BAND + 4.0
+	caption.offset_bottom = -6.0
 	caption.clip_text = true
 	add_child(caption)
 	call_deferred("_deferred_fit_caption", caption, label_text)
@@ -186,8 +203,8 @@ func _deferred_fit_text_label(lbl: Label, line: String) -> void:
 
 
 func _deferred_fit_caption(lbl: Label, line: String) -> void:
-	var max_w := maxf(BTN_SIZE - 16.0, 40.0)
-	_fit_label_line_to_width(lbl, line, 20, 13, max_w)
+	var max_w := maxf(BTN_SIZE - 20.0, 40.0)
+	_fit_label_line_to_width(lbl, line, 22, 14, max_w)
 
 
 func _fit_label_line_to_width(lbl: Label, line: String, max_fs: int, min_fs: int, max_w: float) -> void:

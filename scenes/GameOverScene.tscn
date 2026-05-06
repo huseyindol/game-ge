@@ -65,7 +65,7 @@ theme = ExtResource("2_theme")
 theme_override_colors/font_color = Color(0.55, 0.08, 0.65, 1)
 theme_override_fonts/font = ExtResource("3_sigmar")
 theme_override_font_sizes/font_size = 64
-text = "😢  Canlar Bitti!"
+text = "Canlar Bitti!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -81,7 +81,7 @@ grow_horizontal = 2
 theme = ExtResource("2_theme")
 theme_override_colors/font_color = Color(0.38, 0.1, 0.68, 1)
 theme_override_font_sizes/font_size = 30
-text = "Hadi tekrar deneyelim! 💪"
+text = "Hadi tekrar deneyelim!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -103,4 +103,4 @@ theme_override_font_sizes/font_size = 44
 theme_override_styles/normal = SubResource("StyleBoxFlat_retry")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_retry")
 theme_override_styles/hover = SubResource("StyleBoxFlat_retry_hover")
-text = "🔄  Tekrar Dene"
+text = "Tekrar Dene"

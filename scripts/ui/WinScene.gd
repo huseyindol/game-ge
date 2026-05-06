@@ -33,7 +33,7 @@ func _fit_background_and_confetti() -> void:
 
 func _animate_title() -> void:
 	# Tek satır + büyük scale editördekinden farklı taşır; iki satır + scale yok.
-	title.text = "🎉 Tebrikler\nKazandın! 🎉"
+	title.text = "Tebrikler\nKazandın!"
 	title.scale = Vector2.ONE
 	title.modulate.a = 0.0
 	var t := create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)

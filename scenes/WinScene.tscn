@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cqk7sjs8jyvnj" path="res://scenes/ParentPanel.tscn" id="2_pp"]
 [ext_resource type="Theme" uid="uid://d0sr855g4svyy" path="res://themes/GameTheme.tres" id="3_theme"]
 [ext_resource type="FontFile" uid="uid://d1sej87trg1h4" path="res://fonts/Sigmar-Regular.ttf" id="4_sigmar"]
+[ext_resource type="Texture2D" path="res://assets/ui/icon_parents.svg" id="5_par"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_again"]
 content_margin_left = 24.0
@@ -101,7 +102,7 @@ theme = ExtResource("3_theme")
 theme_override_colors/font_color = Color(0.38, 0.28, 0.08, 1)
 theme_override_font_sizes/font_size = 22
 autowrap_mode = 3
-text = "Ebeveynler için: Çocuğunuzun ilerleme ve istatistik özetini görmek için sağ alttaki 👪 simgesine dokunun."
+text = "Ebeveynler için: Çocuğunuzun ilerleme ve istatistik özetini görmek için sol alttaki ebeveyn düğmesine dokunun."
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -122,25 +123,25 @@ theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_again")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_again")
 theme_override_styles/hover = SubResource("StyleBoxFlat_again_hover")
-text = "▶  Tekrar Oyna"
+text = "Tekrar Oyna"
 
 [node name="ParentIcon" type="Button" parent="UI/UIRoot" unique_id=999753627]
 layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
+anchors_preset = 0
+anchor_left = 0.0
 anchor_top = 1.0
-anchor_right = 1.0
+anchor_right = 0.0
 anchor_bottom = 1.0
-offset_left = -100.0
+offset_left = 16.0
 offset_top = -100.0
-offset_right = -16.0
+offset_right = 116.0
 offset_bottom = -16.0
 grow_horizontal = 0
 grow_vertical = 0
 tooltip_text = "Ebeveyn Paneli"
-theme_override_font_sizes/font_size = 44
-text = "👪"
 flat = true
+icon = ExtResource("5_par")
+expand_icon = true
 
 [node name="ParentPanel" parent="UI" unique_id=441035873 instance=ExtResource("2_pp")]
 visible = false

@@ -3,6 +3,6 @@
 [ext_resource type="Script" path="res://scripts/ui/Choice.gd" id="1_choice"]
 
 [node name="Choice" type="Button"]
-custom_minimum_size = Vector2(160, 160)
+custom_minimum_size = Vector2(248, 248)
 focus_mode = 0
 script = ExtResource("1_choice")

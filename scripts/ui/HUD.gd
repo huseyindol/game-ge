@@ -11,9 +11,9 @@ class_name HUD
 const PROMPT_FONT_MAX := 76
 const PROMPT_FONT_MIN := 24
 
-const HEART_FULL := "♥"
-const HEART_EMPTY := "♡"
-var _heart_labels: Array[Label] = []
+const TEX_HEART_FULL: Texture2D = preload("res://assets/ui/heart_full.svg")
+const TEX_HEART_EMPTY: Texture2D = preload("res://assets/ui/heart_empty.svg")
+var _heart_icons: Array[TextureRect] = []
 
 
 func _ready() -> void:
@@ -34,19 +34,20 @@ func _on_viewport_size_changed() -> void:
 func _build_hearts() -> void:
 	for c in hearts_container.get_children():
 		c.queue_free()
-	_heart_labels.clear()
-	for i in GameData.MAX_LIVES:
-		var l := Label.new()
-		l.text = HEART_FULL
-		l.add_theme_font_size_override("font_size", 42)
-		l.add_theme_color_override("font_color", Color("#EF476F"))
-		hearts_container.add_child(l)
-		_heart_labels.append(l)
+	_heart_icons.clear()
+	for i in range(GameData.MAX_LIVES):
+		var tr := TextureRect.new()
+		tr.texture = TEX_HEART_FULL
+		tr.custom_minimum_size = Vector2(40, 40)
+		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		hearts_container.add_child(tr)
+		_heart_icons.append(tr)
 
 
 func _on_lives_changed(remaining: int) -> void:
-	for i in _heart_labels.size():
-		_heart_labels[i].text = HEART_FULL if i < remaining else HEART_EMPTY
+	for i in _heart_icons.size():
+		_heart_icons[i].texture = TEX_HEART_FULL if i < remaining else TEX_HEART_EMPTY
 
 
 func _on_level_started(level: Dictionary, _choices: Array) -> void:

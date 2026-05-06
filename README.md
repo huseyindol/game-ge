@@ -57,7 +57,7 @@ LevelScene._ready()
 
 ## Ebeveyn Paneli
 
-Final ekranı (24. seviye sonrası) sağ alttaki 👪 ikonuna basılınca açılır.
+Final ekranı (24. seviye sonrası) sol alttaki ebeveyn ikonuna basılınca açılır.
 Veriler `LevelManager.get_parent_summary()` üzerinden çekilir; UI hiçbir
 zaman doğrudan `AnalyticsManager` ile konuşmaz.
 

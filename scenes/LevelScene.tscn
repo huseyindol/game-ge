@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://b1level0000000"]
+[gd_scene load_steps=8 format=3 uid="uid://b1level0000000"]
 
 [ext_resource type="Script" path="res://scripts/ui/LevelScene.gd" id="1_lvl"]
 [ext_resource type="Script" path="res://scripts/ui/HUD.gd" id="2_hud"]
 [ext_resource type="Theme" path="res://themes/GameTheme.tres" id="3_theme"]
 [ext_resource type="FontFile" uid="uid://d1sej87trg1h4" path="res://fonts/Sigmar-Regular.ttf" id="4_sigmar"]
+[ext_resource type="Texture2D" path="res://assets/ui/icon_speaker.svg" id="5_spk"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_flat"]
 
@@ -58,11 +59,11 @@ size_flags_horizontal = 3
 [node name="PlaySoundButton" type="Button" parent="HUD/MainLayout/RootVBox/TopBlock/IconsRow"]
 custom_minimum_size = Vector2(64, 64)
 flat = true
-theme_override_font_sizes/font_size = 36
 theme_override_styles/normal = SubResource("StyleBoxEmpty_flat")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_flat")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_flat")
-text = "🔊"
+icon = ExtResource("5_spk")
+expand_icon = true
 
 [node name="PromptLabel" type="Label" parent="HUD/MainLayout/RootVBox/TopBlock"]
 size_flags_horizontal = 3

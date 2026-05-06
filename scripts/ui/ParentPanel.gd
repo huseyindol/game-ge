@@ -53,7 +53,7 @@ func _render() -> void:
 		c.queue_free()
 
 	var s := LevelManager.get_parent_summary()
-	_add_title("📊  Ebeveyn Paneli")
+	_add_title("Ebeveyn Paneli")
 	_add_row("Doğruluk Oranı",      "%%%.1f"   % s.accuracy_percent)
 	_add_row("Yanlış Yapma Oranı",  "%%%.1f"   % s.wrong_percent)
 	_add_row("Toplam Doğru",        "%d"       % s.total_correct)
