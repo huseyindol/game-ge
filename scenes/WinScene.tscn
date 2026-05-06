@@ -5,6 +5,7 @@
 [ext_resource type="Theme" uid="uid://d0sr855g4svyy" path="res://themes/GameTheme.tres" id="3_theme"]
 [ext_resource type="FontFile" uid="uid://d1sej87trg1h4" path="res://fonts/Sigmar-Regular.ttf" id="4_sigmar"]
 [ext_resource type="Texture2D" path="res://assets/ui/icon_parents.svg" id="5_par"]
+[ext_resource type="Texture2D" path="res://assets/ui/icon_play.svg" id="6_play"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_again"]
 content_margin_left = 24.0
@@ -124,6 +125,8 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_again")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_again")
 theme_override_styles/hover = SubResource("StyleBoxFlat_again_hover")
 text = "Tekrar Oyna"
+icon = ExtResource("6_play")
+expand_icon = true
 
 [node name="ParentIcon" type="Button" parent="UI/UIRoot" unique_id=999753627]
 layout_mode = 1

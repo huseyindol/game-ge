@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bnr83ormrsbps" path="res://scripts/ui/Main.gd" id="1_main"]
 [ext_resource type="Theme" uid="uid://d0sr855g4svyy" path="res://themes/GameTheme.tres" id="2_theme"]
 [ext_resource type="FontFile" uid="uid://d1sej87trg1h4" path="res://fonts/Sigmar-Regular.ttf" id="3_sigmar"]
+[ext_resource type="Texture2D" path="res://assets/ui/icon_play.svg" id="4_play"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn"]
 content_margin_left = 24.0
@@ -107,3 +108,5 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 text = "Başla!"
+icon = ExtResource("4_play")
+expand_icon = true

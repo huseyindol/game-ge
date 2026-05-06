@@ -190,9 +190,26 @@ func _build_choice_for(level: Dictionary, key: String) -> Choice:
 
 
 func _safe_load_texture(path: String) -> Texture2D:
-	if ResourceLoader.exists(path):
-		return load(path)
-	Log.warn("LevelScene", "Görsel bulunamadı, placeholder kullanılıyor: %s" % path)
+	if path.is_empty():
+		return null
+	# Aynı dosya adı için .jpeg / .jpg / .png / .svg dene (web export / import farkları).
+	var base_dir := path.get_base_dir()
+	var stem := path.get_file().get_basename()
+	var picked: Array[String] = []
+	picked.append(path)
+	for ext in ["jpeg", "jpg", "png", "svg", "webp"]:
+		var cand := base_dir.path_join(stem + "." + ext)
+		if cand not in picked:
+			picked.append(cand)
+	for cand in picked:
+		if not ResourceLoader.exists(cand):
+			continue
+		var res: Resource = load(cand)
+		if res is Texture2D:
+			var tex := res as Texture2D
+			if tex.get_width() > 0 and tex.get_height() > 0:
+				return tex
+	Log.warn("LevelScene", "Görsel yüklenemedi (tüm uzantılar denendi): %s" % path)
 	return null
 
 
