@@ -1,17 +1,15 @@
-# game-ge: main → Godot Web export + Next.js sitesinde public altına kopyalama + commit/push
+# game-ge: main → Godot Web export + Next.js public altına kopyalama + push
 #
-# Gerekli secret
-#   NEXTJS_DEPLOY_TOKEN — hedef Next.js reposunda contents:write (PAT veya fine-grained)
+# Zorunlu secrets (Actions → Secrets and variables → Secrets):
+#   NEXTJS_DEPLOY_TOKEN       — PAT; hedef Next.js reposunda contents:write
+#   NEXTJS_DEPLOY_REPO        — örn. huseyindol/nextjs-approute-project
+#   NEXTJS_PUBLIC_GAME_PATH   — public içi alt yol; örn. assets/games/game-ge
 #
-# Gerekli repository variables (game-ge → Settings → Variables → Actions)
-#   NEXTJS_DEPLOY_REPO     — örn. huseyindol/nextjs-approute-project
-#   NEXTJS_PUBLIC_GAME_PATH — public içindeki alt yol, örn. assets/games/game-ge  (public/ yazma)
+# Not: REPO ve public path için Secrets kullanıyoruz (workflow secrets.*).
+# İsteğe bağlı: Next checkout dalı — aşağıdaki `ref` satırını açıp sabit veya vars ile ver.
+# (Şu an ref yok: actions/checkout hedef reponun varsayılan dalını kullanır, genelde main.)
 #
-# İsteğe bağlı variables
-#   NEXTJS_DEPLOY_REF — checkout dalı (boşsa main)
-#   NEXTJS_VERSION_FILE — üretilen TS dosyası, next-site köküne göre (boşsa src/lib/godot-game-asset-version.generated.ts)
-#
-# Deploy koşulu yoksa: yalnızca artifact (godot-web) üretilir.
+# Secrets eksikse deploy job’da checkout/push adımı hata verir; build yine de artifact üretir.
 
 name: Deploy Web to Next.js
 
@@ -72,7 +70,6 @@ jobs:
     name: Next.js reposuna kopyala ve push
     runs-on: ubuntu-latest
     needs: build
-    if: ${{ vars.NEXTJS_DEPLOY_REPO != '' && vars.NEXTJS_PUBLIC_GAME_PATH != '' }}
     steps:
       - name: Export indir
         uses: actions/download-artifact@v4
@@ -83,14 +80,13 @@ jobs:
       - name: Next.js reposunu checkout
         uses: actions/checkout@v4
         with:
-          repository: ${{ vars.NEXTJS_DEPLOY_REPO }}
+          repository: ${{ secrets.NEXTJS_DEPLOY_REPO }}
           token: ${{ secrets.NEXTJS_DEPLOY_TOKEN }}
           path: next-site
-          ref: ${{ vars.NEXTJS_DEPLOY_REF != '' && vars.NEXTJS_DEPLOY_REF || 'main' }}
 
       - name: Godot çıktısını public altına kopyala
         env:
-          SUBPATH: ${{ vars.NEXTJS_PUBLIC_GAME_PATH }}
+          SUBPATH: ${{ secrets.NEXTJS_PUBLIC_GAME_PATH }}
         run: |
           set -euo pipefail
           TARGET="next-site/public/${SUBPATH}"
@@ -100,28 +96,15 @@ jobs:
           echo "Kopyalanan dosyalar:"
           ls -la "${TARGET}"
 
-      - name: Önbellek anahtarı TS dosyası
-        env:
-          VERSION_FILE: ${{ vars.NEXTJS_VERSION_FILE }}
-        run: |
-          set -euo pipefail
-          VF="${VERSION_FILE:-src/lib/godot-game-asset-version.generated.ts}"
-          OUT="next-site/${VF}"
-          mkdir -p "$(dirname "${OUT}")"
-          {
-            echo '/** game-ge GitHub Actions — elle düzenlemeyin. */'
-            echo "export const GAME_GE_ASSET_CACHE_KEY = \"${{ github.run_id }}\";"
-          } > "${OUT}"
-
       - name: Commit ve push
         working-directory: next-site
+        env:
+          PUBLIC_SUBPATH: ${{ secrets.NEXTJS_PUBLIC_GAME_PATH }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          VF="${{ vars.NEXTJS_VERSION_FILE }}"
-          VF="${VF:-src/lib/godot-game-asset-version.generated.ts}"
-          git add "public/${{ vars.NEXTJS_PUBLIC_GAME_PATH }}" "${VF}"
+          git add "public/${PUBLIC_SUBPATH}"
           if git diff --cached --quiet; then
             echo "Commit edilecek değişiklik yok"
             exit 0
