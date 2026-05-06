@@ -1,0 +1,130 @@
+# game-ge: main → Godot Web export + Next.js sitesinde public altına kopyalama + commit/push
+#
+# Gerekli secret
+#   NEXTJS_DEPLOY_TOKEN — hedef Next.js reposunda contents:write (PAT veya fine-grained)
+#
+# Gerekli repository variables (game-ge → Settings → Variables → Actions)
+#   NEXTJS_DEPLOY_REPO     — örn. huseyindol/nextjs-approute-project
+#   NEXTJS_PUBLIC_GAME_PATH — public içindeki alt yol, örn. assets/games/game-ge  (public/ yazma)
+#
+# İsteğe bağlı variables
+#   NEXTJS_DEPLOY_REF — checkout dalı (boşsa main)
+#   NEXTJS_VERSION_FILE — üretilen TS dosyası, next-site köküne göre (boşsa src/lib/godot-game-asset-version.generated.ts)
+#
+# Deploy koşulu yoksa: yalnızca artifact (godot-web) üretilir.
+
+name: Deploy Web to Next.js
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+env:
+  GODOT_VERSION: "4.6.2"
+  EXPORT_PRESET: "Web"
+
+jobs:
+  build:
+    name: Godot Web export
+    runs-on: ubuntu-24.04
+    container:
+      image: barichello/godot-ci:4.6.2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Godot ve export şablonları
+        run: |
+          mkdir -p ~/.local/share/godot/export_templates/
+          mkdir -p ~/.config/
+          if [ -d /root/.config/godot ]; then
+            cp -a /root/.config/godot ~/.config/ || true
+          fi
+          if [ -d /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ]; then
+            cp -a /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable \
+              ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          else
+            echo "Şablon klasörü bulunamadı: ${GODOT_VERSION}.stable"
+            ls -la /root/.local/share/godot/export_templates/ || true
+            exit 1
+          fi
+
+      - name: Web export
+        run: |
+          mkdir -p build/web
+          EXPORT_DIR="$(readlink -f build)"
+          godot --headless --verbose --export-release "${EXPORT_PRESET}" "${EXPORT_DIR}/web/index.html"
+
+      - name: Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-web
+          path: build/web
+          retention-days: 14
+
+  deploy:
+    name: Next.js reposuna kopyala ve push
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ vars.NEXTJS_DEPLOY_REPO != '' && vars.NEXTJS_PUBLIC_GAME_PATH != '' }}
+    steps:
+      - name: Export indir
+        uses: actions/download-artifact@v4
+        with:
+          name: godot-web
+          path: build/web
+
+      - name: Next.js reposunu checkout
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.NEXTJS_DEPLOY_REPO }}
+          token: ${{ secrets.NEXTJS_DEPLOY_TOKEN }}
+          path: next-site
+          ref: ${{ vars.NEXTJS_DEPLOY_REF != '' && vars.NEXTJS_DEPLOY_REF || 'main' }}
+
+      - name: Godot çıktısını public altına kopyala
+        env:
+          SUBPATH: ${{ vars.NEXTJS_PUBLIC_GAME_PATH }}
+        run: |
+          set -euo pipefail
+          TARGET="next-site/public/${SUBPATH}"
+          rm -rf "${TARGET:?}"/*
+          mkdir -p "${TARGET}"
+          cp -a build/web/. "${TARGET}/"
+          echo "Kopyalanan dosyalar:"
+          ls -la "${TARGET}"
+
+      - name: Önbellek anahtarı TS dosyası
+        env:
+          VERSION_FILE: ${{ vars.NEXTJS_VERSION_FILE }}
+        run: |
+          set -euo pipefail
+          VF="${VERSION_FILE:-src/lib/godot-game-asset-version.generated.ts}"
+          OUT="next-site/${VF}"
+          mkdir -p "$(dirname "${OUT}")"
+          {
+            echo '/** game-ge GitHub Actions — elle düzenlemeyin. */'
+            echo "export const GAME_GE_ASSET_CACHE_KEY = \"${{ github.run_id }}\";"
+          } > "${OUT}"
+
+      - name: Commit ve push
+        working-directory: next-site
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          VF="${{ vars.NEXTJS_VERSION_FILE }}"
+          VF="${VF:-src/lib/godot-game-asset-version.generated.ts}"
+          git add "public/${{ vars.NEXTJS_PUBLIC_GAME_PATH }}" "${VF}"
+          if git diff --cached --quiet; then
+            echo "Commit edilecek değişiklik yok"
+            exit 0
+          fi
+          git commit -m "Deploy game-ge Godot web (${{ github.repository }}@${{ github.sha }} run ${{ github.run_id }})"
+          git push

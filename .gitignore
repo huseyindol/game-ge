@@ -2,7 +2,7 @@
 .godot/
 .import/
 export.cfg
-export_presets.cfg
+# export_presets.cfg — CI için repoda tutulur (Godot Web export).
 *.import
 *.translation
 
@@ -14,6 +14,9 @@ data_*/
 # IDE
 .vscode/
 .idea/
+
+# Yerel export (CI build/web kullanır)
+build/
 
 # OS
 .DS_Store
