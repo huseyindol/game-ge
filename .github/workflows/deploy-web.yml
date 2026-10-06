@@ -1,20 +1,17 @@
-# game-ge: main → Godot Web export + Next.js public altına kopyalama + push
+# Şablon: .claude/skills/web-deploy (studio) · game-ge: main → Godot Web export + Next.js public altına kopyalama + push
 #
 # Zorunlu secrets (Actions → Secrets and variables → Secrets):
 #   NEXTJS_DEPLOY_TOKEN       — PAT; hedef Next.js reposunda contents:write
 #   NEXTJS_DEPLOY_REPO        — örn. huseyindol/nextjs-approute-project
 #   NEXTJS_PUBLIC_GAME_PATH   — public içi alt yol; örn. assets/games/game-ge
 #
-# Not: REPO ve public path için Secrets kullanıyoruz (workflow secrets.*).
+# Godot Web export göreli yollar kullanır; alt klasörde (iframe) olduğu gibi çalışır.
+# Export preset'i "Web", thread_support=false olmalı (COOP/COEP başlığı gerektirmez).
 #
 # Üretilen sürüm dosyası: next-site içinde src/lib/game-ge-asset-version.generated.ts
 # Next iframe örn.: `.../index.html?v=${GAME_GE_ASSET_CACHE_KEY}`
-# (Yolu değiştirmek istersen workflow’da OUT ve git add yolunu güncelle.)
 #
-# İsteğe bağlı: Next checkout dalı — checkout adımına `ref: main` vb. eklenebilir.
-# (ref yok: actions/checkout hedef reponun varsayılan dalını kullanır.)
-#
-# Secrets eksikse deploy job’da checkout/push adımı hata verir; build yine de artifact üretir.
+# Secrets eksikse build job'ı hemen hata verir; hedef repoya hiçbir şey yazılmaz.
 
 name: Deploy Web to Next.js
 
@@ -22,9 +19,15 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
+
+# Art arda push'lar hedef repoya aynı anda yazmasın (sırayla çalışır).
+concurrency:
+  group: deploy-web-game-ge
+  cancel-in-progress: false
 
 env:
   GODOT_VERSION: "4.6.2"
@@ -37,6 +40,17 @@ jobs:
     container:
       image: barichello/godot-ci:4.6.2
     steps:
+      - name: Secret kontrolü
+        env:
+          PUBLIC_SUBPATH: ${{ secrets.NEXTJS_PUBLIC_GAME_PATH }}
+        run: |
+          SUB="${PUBLIC_SUBPATH#/}"
+          SUB="${SUB%/}"
+          if [ -z "${SUB}" ]; then
+            echo "::error::NEXTJS_PUBLIC_GAME_PATH secret'ı boş; örn. assets/games/game-ge"
+            exit 1
+          fi
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -58,11 +72,21 @@ jobs:
             exit 1
           fi
 
+      # .godot/ repoda yok: içe aktarma ve global sınıf (class_name) önbelleği burada üretilir.
+      # Bu adım olmadan ilk derlemede "Could not find type ..." hatası çıkar (crane-games).
+      - name: Projeyi içe aktar
+        run: |
+          godot --headless --import || true
+          godot --headless --import
+
       - name: Web export
         run: |
           mkdir -p build/web
           EXPORT_DIR="$(readlink -f build)"
           godot --headless --verbose --export-release "${EXPORT_PRESET}" "${EXPORT_DIR}/web/index.html"
+          test -s build/web/index.html
+          test -s build/web/index.wasm
+          test -s build/web/index.pck
 
       - name: Artifact
         uses: actions/upload-artifact@v4
@@ -91,11 +115,18 @@ jobs:
 
       - name: Godot çıktısını public altına kopyala
         env:
-          SUBPATH: ${{ secrets.NEXTJS_PUBLIC_GAME_PATH }}
+          PUBLIC_SUBPATH: ${{ secrets.NEXTJS_PUBLIC_GAME_PATH }}
         run: |
           set -euo pipefail
-          TARGET="next-site/public/${SUBPATH}"
-          rm -rf "${TARGET:?}"/*
+          SUB="${PUBLIC_SUBPATH#/}"
+          SUB="${SUB%/}"
+          # Boş yol "public/*" silinmesi demek olurdu; asla izin verme.
+          if [ -z "${SUB}" ]; then
+            echo "::error::NEXTJS_PUBLIC_GAME_PATH secret'ı boş"
+            exit 1
+          fi
+          TARGET="next-site/public/${SUB}"
+          rm -rf "${TARGET:?}"
           mkdir -p "${TARGET}"
           cp -a build/web/. "${TARGET}/"
           echo "Kopyalanan dosyalar:"
@@ -118,9 +149,11 @@ jobs:
           PUBLIC_SUBPATH: ${{ secrets.NEXTJS_PUBLIC_GAME_PATH }}
         run: |
           set -euo pipefail
+          SUB="${PUBLIC_SUBPATH#/}"
+          SUB="${SUB%/}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add "public/${PUBLIC_SUBPATH}" "src/lib/game-ge-asset-version.generated.ts"
+          git add "public/${SUB}" "src/lib/game-ge-asset-version.generated.ts"
           if git diff --cached --quiet; then
             echo "Commit edilecek değişiklik yok"
             exit 0
