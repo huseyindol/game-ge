@@ -2,7 +2,7 @@
 #
 # Zorunlu secrets (Actions → Secrets and variables → Secrets):
 #   NEXTJS_DEPLOY_TOKEN       — PAT; hedef Next.js reposunda contents:write
-#   NEXTJS_DEPLOY_REPO        — örn. huseyindol/nextjs-approute-project
+#   NEXTJS_DEPLOY_REPO        — örn. huseyindol/huseyindolcom
 #   NEXTJS_PUBLIC_GAME_PATH   — public içi alt yol; örn. assets/games/game-ge
 #
 # Godot Web export göreli yollar kullanır; alt klasörde (iframe) olduğu gibi çalışır.
